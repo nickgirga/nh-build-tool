@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NH Build Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>NH Build Tool</h1>
+        <p class="subtitle">Paste FreshService ticket data to automatically find all the info needed to build a new hire account</p>
+
+        <div class="file-section">
+            <label for="excelFile">Select Excel Workbook</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="excelFile" accept=".xlsx" />
+                <button class="secondary-btn danger" id="clearExcelBtn">Clear Stored Data</button>
+            </div>
+            <p class="file-status" id="fileStatus"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="ticketData">Paste Ticket Data</label>
+            <textarea id="ticketData" placeholder="Press Ctrl+A to select all ticket content, Ctrl+C to copy it, then Ctrl+V to paste in this text field"></textarea>
+        </div>
+
+        <div class="btn-wrapper">
+            <button class="primary-btn" id="generateBtn">Parse Ticket Info</button>
+            <button class="secondary-btn" id="clearBtn">Clear Data</button>
+        </div>
+        
+        <div class="error-log" id="errorLog"></div>
+        <div class="warning-log" id="warningLog"></div>
+        <div class="sla-warning-log" id="slaWarningLog"></div>
+        <div class="info-log" id="infoLog"></div>
+        <div class="notes-log" id="notesLogId"></div>
+
+        <div class="output-section" id="outputSection" style="display: none;">
+            <h2>Table Row Output</h2>
+            
+            <div class="table-scroll">
+                <div class="table-grid">
+                    <span class="header-cell">Ticket</span>
+                    <span class="header-cell">Date Received</span>
+                    <span class="header-cell">Date Worked</span>
+                    <span class="header-cell">Name</span>
+                    <span class="header-cell">User</span>
+                    <span class="header-cell">E-Mail</span>
+                    <span class="header-cell">Job Title</span>
+                    <span class="header-cell">EMP Type</span>
+                    <span class="header-cell">Start Date</span>
+                    <span class="header-cell">Division</span>
+                    <span class="header-cell">Location</span>
+                    <span class="header-cell">Phone#</span>
+                    <span class="header-cell">Employee#</span>
+
+                    <span class="cell" id="ticket"></span>
+                    <span class="cell" id="dateReceived"></span>
+                    <span class="cell" id="dateWorked"></span>
+                    <span class="cell" id="name"></span>
+                    <span class="cell" id="user"></span>
+                    <span class="cell" id="email"></span>
+                    <span class="cell" id="jobTitle"></span>
+                    <span class="cell" id="empType"></span>
+                    <span class="cell" id="startDate"></span>
+                    <span class="cell" id="division"></span>
+                    <span class="cell" id="location"></span>
+                    <span class="cell" id="phone"></span>
+                    <span class="cell" id="employeeId"></span>
+                </div>
+            </div>
+
+            <button class="copy-btn" id="copyBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+        </div>
+
+        <div class="ad-section" id="adSection" style="display: none;">
+            <h2>Department for AD</h2>
+            <p class="ad-format-field" id="adDivision"></p>
+            <button class="copy-btn" id="copyAdBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+        </div>
+
+        <div class="cmic-section" id="cmicSection" style="display: none;">
+            <h2>Company for AD</h2>
+            <p class="ad-format-field" id="cmicCode"></p>
+            <button class="copy-btn" id="copyCmicBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+        </div>
+
+        <div class="supervisor-section" id="supervisorSection" style="display: none;">
+            <h2>Manager</h2>
+            <p class="ad-format-field" id="supervisorDisplay"></p>
+            <div class="supervisor-buttons">
+                <button class="copy-btn with-text" id="copySupervisorNameBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span>Copy Name</button>
+                <button class="copy-btn with-text" id="copySupervisorIdBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span>Copy ID</button>
+            </div>
+        </div>
+
+        <div class="lookup-section" id="lookupSection" style="display: none;">
+            <h2>Job Information</h2>
+            <p class="lookup-warning" id="lookupWarning">The information parsed from the ticket is a best guess for these fields. Always double check them against the ticket for accuracy.</p>
+            
+            <div class="lookup-row">
+                <label for="jobTypeSelect">Employee Type:</label>
+                <select id="jobTypeSelect"></select>
+            </div>
+            
+            <div class="lookup-row">
+                <label for="jobTitleSelect">Job Title:</label>
+                <select id="jobTitleSelect"></select>
+            </div>
+            
+            <div class="lookup-row">
+                <label for="locationSelect">Location:</label>
+                <select id="locationSelect"></select>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="section-header">
+                <h2>Lookup Results</h2>
+                <button class="copy-btn" id="copyAllAdRolesBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span>Copy all AD roles</button>
+            </div>
+
+            <div class="result-group">
+                <h3>AD Roles (Employee Type)</h3>
+                <p class="result-value" id="adRolesPerType"></p>
+                <button class="copy-btn small" id="copyAdRolesPerTypeBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>AD Roles (Job Title)</h3>
+                <p class="result-value" id="adRolesPerJobTitle"></p>
+                <button class="copy-btn small" id="copyAdRolesPerJobTitleBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>AD Roles (Location)</h3>
+                <p class="result-value" id="adRolesPerLocation"></p>
+                <button class="copy-btn small" id="copyAdRolesPerLocationBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>CMiC User Settings</h3>
+                <p class="result-value" id="cmicUserSettings"></p>
+                <button class="copy-btn small" id="copyCmicUserSettingsBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>CMiC User Access</h3>
+                <p class="result-value" id="cmicUserAccess"></p>
+                <button class="copy-btn small" id="copyCmicUserAccessBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>O365 Groups</h3>
+                <p class="result-value" id="o365Groups"></p>
+                <button class="copy-btn small" id="copyO365GroupsBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+
+            <div class="result-group">
+                <h3>Area Codes</h3>
+                <p class="result-value" id="areaCodes"></p>
+                <button class="copy-btn small" id="copyAreaCodesBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Nicholas Girga &copy; 2026<br>
+        <a href="https://gitlab.com/ticket-formatter/ticket-formatter.gitlab.io/-/raw/main/LICENSE" target="_blank">Released under the MIT License</a><br>
+        <a href="https://gitlab.com/ticket-formatter/ticket-formatter.gitlab.io" target="_blank">Project Repository</a><br>
+        <a href="https://gitlab.com/ticket-formatter/ticket-formatter.gitlab.io/-/work_items/new" target="_blank">Report Issue / Request Features</a><br>
+        <a href="https://gitlab.com/ticket-formatter/ticket-formatter.gitlab.io#privacy-policy" target="_blank">Privacy Policy</a>
+    </footer>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
