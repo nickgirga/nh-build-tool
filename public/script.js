@@ -502,6 +502,17 @@ const loginInfoCells = {
     agentName: document.getElementById('loginAgentName')
 };
 
+const reportingCells = {
+    ticket: document.getElementById('reportTicket'),
+    name: document.getElementById('reportName'),
+    division: document.getElementById('reportDivision'),
+    dateReceived: document.getElementById('reportDateReceived'),
+    startDate: document.getElementById('reportStartDate'),
+    busDays: document.getElementById('reportBusDays'),
+    solutionTeam: document.getElementById('reportSolutionTeam'),
+    agentName: document.getElementById('reportAgentName')
+};
+
 const months = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
 function parseDateReceived(str) {
@@ -844,6 +855,16 @@ function updateOutput(data) {
     loginInfoCells.password.textContent = '';
     loginInfoCells.solutionTeam.textContent = data.solutionTeam || '';
     loginInfoCells.agentName.textContent = agentNameInput.value || '';
+    
+    reportingCells.ticket.textContent = data.ticket || '';
+    reportingCells.name.textContent = data.name || '';
+    reportingCells.division.textContent = data.division || '';
+    reportingCells.dateReceived.textContent = data.dateReceived || '';
+    reportingCells.startDate.textContent = data.startDate || '';
+    reportingCells.busDays.textContent = '';
+    reportingCells.busDays.setAttribute('data-formula', '=NETWORKDAYS.INTL(INDEX(E:E,ROW()),INDEX(F:F,ROW()))');
+    reportingCells.solutionTeam.textContent = data.solutionTeam || '';
+    reportingCells.agentName.textContent = agentNameInput.value || '';
 
     Object.values(cells).forEach(cell => {
         cell.onclick = async () => {
@@ -897,6 +918,20 @@ function getLoginInfoRowString() {
         loginInfoCells.password.textContent,
         loginInfoCells.solutionTeam.textContent,
         loginInfoCells.agentName.textContent
+    ].join('\t');
+}
+
+function getReportingRowString() {
+    const busDaysValue = reportingCells.busDays.getAttribute('data-formula') || reportingCells.busDays.textContent;
+    return [
+        reportingCells.ticket.textContent,
+        reportingCells.name.textContent,
+        reportingCells.division.textContent,
+        reportingCells.dateReceived.textContent,
+        reportingCells.startDate.textContent,
+        busDaysValue,
+        reportingCells.solutionTeam.textContent,
+        reportingCells.agentName.textContent
     ].join('\t');
 }
 
@@ -1154,6 +1189,7 @@ generateBtn.addEventListener('click', () => {
     resetAnimations();
     outputSection.style.display = 'flex';
     document.getElementById('loginInfoSection').style.display = 'flex';
+    document.getElementById('reportingSection').style.display = 'flex';
     
     const adFormatted = formatAdDivision(data.division);
     adDivisionEl.textContent = adFormatted;
@@ -1195,6 +1231,11 @@ function resetAnimations() {
         loginInfoSection.style.display = 'none';
     }
     
+    const reportingSection = document.getElementById('reportingSection');
+    if (reportingSection) {
+        reportingSection.style.display = 'none';
+    }
+    
     setTimeout(() => {
         sections.forEach(section => {
             section.style.animation = '';
@@ -1217,6 +1258,15 @@ document.getElementById('copyLoginInfoBtn').addEventListener('click', async () =
     document.getElementById('copyLoginInfoBtn').classList.add('copied');
     setTimeout(() => {
         document.getElementById('copyLoginInfoBtn').classList.remove('copied');
+    }, 1500);
+});
+
+document.getElementById('copyReportingBtn').addEventListener('click', async () => {
+    const rowString = getReportingRowString();
+    await navigator.clipboard.writeText(rowString);
+    document.getElementById('copyReportingBtn').classList.add('copied');
+    setTimeout(() => {
+        document.getElementById('copyReportingBtn').classList.remove('copied');
     }, 1500);
 });
 
