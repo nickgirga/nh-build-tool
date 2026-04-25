@@ -1336,6 +1336,15 @@ generateBtn.addEventListener('click', () => {
     document.getElementById('loginInfoSection').style.display = 'flex';
     document.getElementById('reportingSection').style.display = 'flex';
     
+    if (!usersCells.ticket.textContent.trim()) {
+        if (data.ticket && data.solutionTeam) {
+            const lastName = data.solutionTeam.split(' ').pop();
+            usersCells.ticket.textContent = `${data.ticket} - ${lastName}`;
+        } else if (data.ticket) {
+            usersCells.ticket.textContent = data.ticket;
+        }
+    }
+    
     const adFormatted = formatAdDivision(data.division);
     adDivisionEl.textContent = adFormatted;
     setTimeout(() => {
