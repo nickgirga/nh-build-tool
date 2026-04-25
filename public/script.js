@@ -1,10 +1,13 @@
 const XLS = window.XLSX || window.xlsx;
 
 const STORAGE_KEY = 'nhbuildtool_workbook';
+const AGENT_NAME_KEY = 'nhbuildtool_agentName';
 
 const excelFileInput = document.getElementById('excelFile');
-const clearExcelBtn = document.getElementById('clearExcelBtn');
+// const clearExcelBtn = document.getElementById('clearExcelBtn'); // removed - use "Clear All Local Storage" instead
+const clearAllStorageBtn = document.getElementById('clearAllStorageBtn');
 const fileStatus = document.getElementById('fileStatus');
+const agentNameInput = document.getElementById('agentName');
 
 let workbookData = {
     adPerType: [],
@@ -360,30 +363,7 @@ excelFileInput.addEventListener('change', async (e) => {
     reader.readAsArrayBuffer(file);
 });
 
-clearExcelBtn.addEventListener('click', () => {
-    localStorage.removeItem(STORAGE_KEY);
-    workbookData = {
-        adPerType: [],
-        jobTitles: [],
-        locationMap: [],
-        adPerLocation: [],
-        jobSoftwares: [],
-        cmic: [],
-        cmicLocationMap: []
-    };
-    document.getElementById('jobTypeSelect').innerHTML = '';
-    document.getElementById('jobTitleSelect').innerHTML = '';
-    document.getElementById('locationSelect').innerHTML = '';
-    excelFileInput.value = '';
-    updateFileStatus(false);
-    document.getElementById('adRolesPerType').textContent = '';
-    document.getElementById('adRolesPerJobTitle').textContent = '';
-    document.getElementById('adRolesPerLocation').textContent = '';
-    document.getElementById('cmicUserSettings').textContent = '';
-    document.getElementById('cmicUserAccess').textContent = '';
-    document.getElementById('o365Groups').textContent = '';
-    document.getElementById('areaCodes').textContent = '';
-});
+// clearExcelBtn removed - use "Clear All Local Storage" button instead
 
 function updateFileStatus(loaded) {
     const lookupSection = document.getElementById('lookupSection');
@@ -1215,3 +1195,42 @@ if (loadFromStorage()) {
     populateDropdowns();
     updateFileStatus(true);
 }
+
+const savedAgentName = localStorage.getItem(AGENT_NAME_KEY);
+if (savedAgentName) {
+    agentNameInput.value = savedAgentName;
+}
+
+agentNameInput.addEventListener('input', () => {
+    localStorage.setItem(AGENT_NAME_KEY, agentNameInput.value);
+});
+
+clearAllStorageBtn.addEventListener('click', () => {
+    console.log('Clear button clicked');
+    if (confirm('This will clear all stored Excel data and agent name. Are you sure?')) {
+        console.log('Confirmed, clearing...');
+        localStorage.clear();
+        workbookData = {
+            adPerType: [],
+            jobTitles: [],
+            locationMap: [],
+            adPerLocation: [],
+            jobSoftwares: [],
+            cmic: [],
+            cmicLocationMap: []
+        };
+        document.getElementById('jobTypeSelect').innerHTML = '';
+        document.getElementById('jobTitleSelect').innerHTML = '';
+        document.getElementById('locationSelect').innerHTML = '';
+        document.getElementById('adRolesPerType').textContent = '';
+        document.getElementById('adRolesPerJobTitle').textContent = '';
+        document.getElementById('adRolesPerLocation').textContent = '';
+        document.getElementById('cmicUserSettings').textContent = '';
+        document.getElementById('cmicUserAccess').textContent = '';
+        document.getElementById('o365Groups').textContent = '';
+        document.getElementById('areaCodes').textContent = '';
+        excelFileInput.value = '';
+        agentNameInput.value = '';
+        updateFileStatus(false);
+    }
+});

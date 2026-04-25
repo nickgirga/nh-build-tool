@@ -15,13 +15,15 @@
         <h1>NH Build Tool</h1>
         <p class="subtitle">Paste FreshService ticket data to automatically find all the info needed to build a new hire account</p>
 
-        <div class="file-section">
-            <label for="excelFile">Select Excel Workbook</label>
-            <div class="file-input-wrapper">
-                <input type="file" id="excelFile" accept=".xlsx" />
-                <button class="secondary-btn danger" id="clearExcelBtn">Clear Stored Data</button>
-            </div>
+        <div class="form-group" style="text-align: center;">
+            <label for="excelFile" style="display: block; margin-bottom: 8px;">Select Excel Workbook (.xlsx)</label>
+            <input type="file" id="excelFile" accept=".xlsx" />
             <p class="file-status" id="fileStatus"></p>
+        </div>
+
+        <div class="form-group" id="agentNameGroup">
+            <label for="agentName">Agent Name</label>
+            <input type="text" id="agentName" placeholder="Nicholas Girga">
         </div>
 
         <div class="form-group">
@@ -41,7 +43,7 @@
         <div class="notes-log" id="notesLogId"></div>
 
         <div class="output-section" id="outputSection" style="display: none;">
-            <h2>Table Row Output</h2>
+            <h2>Ticket Log Table Row</h2>
             
             <div class="table-scroll">
                 <div class="table-grid">
@@ -166,6 +168,10 @@
                 <p class="result-value" id="areaCodes"></p>
                 <button class="copy-btn small" id="copyAreaCodesBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span></button>
             </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+            <button type="button" class="secondary-btn danger" id="clearAllStorageBtn">Clear All Local Storage</button>
         </div>
     </div>
 
