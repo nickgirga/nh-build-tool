@@ -237,6 +237,20 @@ function findBestJobTitleMatch(parsedJobTitle) {
     return parsedJobTitle;
 }
 
+function checkForUniqueEmail(parsedDomain, textLower) {
+    const uniqueDomain = new RegExp('s.........c\\.com');
+
+    if (textLower && uniqueDomain.test(textLower)) {
+        for (const domain of workbookData.emailDomains) {
+            if (domain && uniqueDomain.test(domain.toLowerCase())) {
+                return domain;
+            }
+        }
+    }
+
+    return parsedDomain;
+}
+
 function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
     if (empTypeForLookup === 'Craft') {
         return 'Craft';
@@ -1093,6 +1107,8 @@ for (let i = 0; i < lines.length; i++) {
             break;
         }
     }
+
+    data.emailDomain = checkForUniqueEmail(data.emailDomain, textLower);
 
     return data;
 }
