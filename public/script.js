@@ -1333,20 +1333,35 @@ generateBtn.addEventListener('click', async () => {
     if (needsRenameForChars) {
         notes.push('This ticket might need a rename due to character limits.');
     }
-    
+
+    const normalDomainPattern = new RegExp('s.......n\\.com');
+    const uniqueDomainPattern = new RegExp('s.........c\\.com');
+    const ticketTextLower = ticketDataInput.value.toLowerCase();
+    let parsedEmailDomain = '';
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes('Desired Email Domain Name') && lines[i + 1]) {
+            parsedEmailDomain = lines[i + 1].trim().replace(/^@/, '');
+            break;
+        }
+    }
+    const hasUniqueEmailDomain = (parsedEmailDomain && !normalDomainPattern.test(parsedEmailDomain.toLowerCase())) || uniqueDomainPattern.test(ticketTextLower);
+    if (hasUniqueEmailDomain) {
+        notes.push('This ticket appears to request a unique email domain.');
+    }
+
     if (notes.length > 0) {
         notesLog.innerHTML = `<div class="notes-title">Notes</div><ul>${notes.map(n => `<li>${n}</li>`).join('')}</ul>`;
         notesLog.classList.add('show');
     } else {
         notesLog.classList.remove('show');
     }
-    
+
     const data = parseTicketData(ticketDataInput.value);
-    
+
     if (!data.dateReceived) {
         alert("The 'Date Received' could not be found. Ensure you are at the top of the ticket when copying, as FreshService will hide this info as you scroll down.");
     }
-    
+
     const errors = [];
     if (!data.dateReceived) errors.push("Date Received");
     if (!data.ticket) errors.push("Ticket #");
