@@ -811,6 +811,87 @@ button {
     right: 16px;
 }
 
+.users-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background-color: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    position: relative;
+}
+
+.users-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.users-section h2 {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    color: var(--subtext);
+}
+
+.users-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.users-table {
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+    width: auto;
+    max-width: 400px;
+    margin: 12px auto 0;
+}
+
+.users-table tr {
+    border-bottom: 1px solid var(--border);
+}
+
+.users-table tr:last-child {
+    border-bottom: none;
+}
+
+.users-table td {
+    padding: 10px 12px;
+    vertical-align: middle;
+}
+
+.users-table .label-cell {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--subtext);
+    width: 40%;
+}
+
+.users-table .editable-cell {
+    font-size: 14px;
+    font-family: monospace;
+    color: var(--text);
+    background-color: var(--surface-light);
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-height: 36px;
+    cursor: text;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.users-table .editable-cell:hover {
+    border: 1px solid var(--primary);
+}
+
+.users-table .editable-cell:focus {
+    border: 2px solid var(--primary);
+    background-color: var(--bg);
+}
+
 @media (max-width: 800px) {
     .headers,
     .output-row {

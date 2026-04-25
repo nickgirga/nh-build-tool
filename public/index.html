@@ -236,6 +236,44 @@
             </div>
         </div>
 
+        <div class="users-section" id="usersSection">
+            <div class="section-header">
+                <h2>Users Table</h2>
+                <div class="users-buttons">
+                    <button class="copy-btn with-text" id="clearUsersBtn"><span class="material-symbols-outlined">delete</span><span class="material-symbols-outlined">check</span>Clear</button>
+                    <button class="copy-btn with-text" id="copyUsersBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span>Copy All</button>
+                    <button class="copy-btn with-text" id="copyUsersResponseBtn"><span class="material-symbols-outlined">content_copy</span><span class="material-symbols-outlined">check</span>Copy For Response</button>
+                </div>
+            </div>
+            
+            <table class="users-table">
+                <tr>
+                    <td class="label-cell">Ticket:</td>
+                    <td class="editable-cell" id="usersTicket"></td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Username:</td>
+                    <td class="editable-cell" id="usersUsername"></td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Email:</td>
+                    <td class="editable-cell" id="usersEmail"></td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Teams:</td>
+                    <td class="editable-cell" id="usersTeams"></td>
+                </tr>
+                <tr>
+                    <td class="label-cell">CMiC Account:</td>
+                    <td class="editable-cell" id="usersCmicAccount"></td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Password:</td>
+                    <td class="editable-cell" id="usersPassword"></td>
+                </tr>
+            </table>
+        </div>
+
         <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
             <button type="button" class="secondary-btn danger" id="clearAllStorageBtn">Clear All Local Storage</button>
         </div>

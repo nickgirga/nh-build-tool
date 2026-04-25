@@ -2,6 +2,7 @@ const XLS = window.XLSX || window.xlsx;
 
 const STORAGE_KEY = 'nhbuildtool_workbook';
 const AGENT_NAME_KEY = 'nhbuildtool_agentName';
+const USERS_TABLE_KEY = 'nhbuildtool_usersTable';
 
 const excelFileInput = document.getElementById('excelFile');
 // const clearExcelBtn = document.getElementById('clearExcelBtn'); // removed - use "Clear All Local Storage" instead
@@ -512,6 +513,150 @@ const reportingCells = {
     solutionTeam: document.getElementById('reportSolutionTeam'),
     agentName: document.getElementById('reportAgentName')
 };
+
+const usersCells = {
+    ticket: document.getElementById('usersTicket'),
+    username: document.getElementById('usersUsername'),
+    email: document.getElementById('usersEmail'),
+    teams: document.getElementById('usersTeams'),
+    cmicAccount: document.getElementById('usersCmicAccount'),
+    password: document.getElementById('usersPassword')
+};
+
+function initUsersEditableCells() {
+    Object.values(usersCells).forEach(cell => {
+        cell.contentEditable = 'true';
+        cell.addEventListener('input', () => {
+            saveUsersTable();
+        });
+        cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const cells = Object.values(usersCells);
+                const currentIndex = cells.indexOf(cell);
+                const nextIndex = e.shiftKey ? currentIndex - 1 : currentIndex + 1;
+                if (nextIndex >= 0 && nextIndex < cells.length) {
+                    cells[nextIndex].focus();
+                } else if (nextIndex >= cells.length) {
+                    document.getElementById('copyUsersBtn').focus();
+                }
+            }
+        });
+    });
+}
+
+function saveUsersTable() {
+    const data = {
+        ticket: usersCells.ticket.textContent,
+        username: usersCells.username.textContent,
+        email: usersCells.email.textContent,
+        teams: usersCells.teams.textContent,
+        cmicAccount: usersCells.cmicAccount.textContent,
+        password: usersCells.password.textContent
+    };
+    localStorage.setItem(USERS_TABLE_KEY, JSON.stringify(data));
+}
+
+function loadUsersTable() {
+    const stored = localStorage.getItem(USERS_TABLE_KEY);
+    if (stored) {
+        try {
+            const data = JSON.parse(stored);
+            usersCells.ticket.textContent = data.ticket || '';
+            usersCells.username.textContent = data.username || '';
+            usersCells.email.textContent = data.email || '';
+            usersCells.teams.textContent = data.teams || '';
+            usersCells.cmicAccount.textContent = data.cmicAccount || '';
+            usersCells.password.textContent = data.password || '';
+        } catch (e) {
+            console.error('Failed to load users table:', e);
+        }
+    }
+}
+
+function clearUsersTable() {
+    Object.values(usersCells).forEach(cell => {
+        cell.textContent = '';
+    });
+    localStorage.removeItem(USERS_TABLE_KEY);
+}
+
+function getUsersTableHtml() {
+    const rows = [
+        ['Ticket:', usersCells.ticket.textContent],
+        ['Username:', usersCells.username.textContent],
+        ['Email:', usersCells.email.textContent],
+        ['Teams:', usersCells.teams.textContent],
+        ['CMiC Account:', usersCells.cmicAccount.textContent],
+        ['Password:', usersCells.password.textContent]
+    ];
+    
+    let html = '<table style="border-collapse: collapse;">';
+    rows.forEach(([label, value]) => {
+        html += `<tr><td style="border: 1px solid #000; padding: 4px 8px; width: 120px; white-space: nowrap;">${label}</td><td style="border: 1px solid #000; padding: 4px 8px;">${value}</td></tr>`;
+    });
+    html += '</table>';
+    return html;
+}
+
+function getUsersTableHtmlResponse() {
+    const rows = [
+        ['Username:', usersCells.username.textContent],
+        ['Email:', usersCells.email.textContent],
+        ['Teams:', usersCells.teams.textContent]
+    ];
+    
+    let html = '<table style="border-collapse: collapse;">';
+    rows.forEach(([label, value]) => {
+        html += `<tr><td style="border: 1px solid #000; padding: 4px 8px; width: 120px; white-space: nowrap;">${label}</td><td style="border: 1px solid #000; padding: 4px 8px;">${value}</td></tr>`;
+    });
+    html += '</table>';
+    return html;
+}
+
+function getUsersTablePlainText() {
+    const rows = [
+        ['Ticket:', usersCells.ticket.textContent],
+        ['Username:', usersCells.username.textContent],
+        ['Email:', usersCells.email.textContent],
+        ['Teams:', usersCells.teams.textContent],
+        ['CMiC Account:', usersCells.cmicAccount.textContent],
+        ['Password:', usersCells.password.textContent]
+    ];
+    
+    return rows.map(([label, value]) => `${label}\t${value}`).join('\n');
+}
+
+function getUsersTablePlainTextResponse() {
+    const rows = [
+        ['Username:', usersCells.username.textContent],
+        ['Email:', usersCells.email.textContent],
+        ['Teams:', usersCells.teams.textContent]
+    ];
+    
+    return rows.map(([label, value]) => `${label}\t${value}`).join('\n');
+}
+
+async function copyUsersTableAsHtml(html, plainText) {
+    if (ClipboardItem && navigator.clipboard) {
+        try {
+            const blobHtml = new Blob([html], { type: 'text/html' });
+            const blobText = new Blob([plainText], { type: 'text/plain' });
+            
+            const item = new ClipboardItem({
+                'text/html': blobHtml,
+                'text/plain': blobText
+            });
+            
+            await navigator.clipboard.write([item]);
+        } catch (e) {
+            console.warn('HTML clipboard not supported, falling back to plain text');
+            await navigator.clipboard.writeText(plainText);
+        }
+    } else {
+        await navigator.clipboard.writeText(plainText);
+    }
+}
 
 const months = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
@@ -1305,6 +1450,33 @@ copySupervisorIdBtn.addEventListener('click', async () => {
     }, 1500);
 });
 
+document.getElementById('copyUsersBtn').addEventListener('click', async () => {
+    await copyUsersTableAsHtml(getUsersTableHtml(), getUsersTablePlainText());
+    const copyUsersBtn = document.getElementById('copyUsersBtn');
+    copyUsersBtn.classList.add('copied');
+    setTimeout(() => {
+        copyUsersBtn.classList.remove('copied');
+    }, 1500);
+});
+
+document.getElementById('copyUsersResponseBtn').addEventListener('click', async () => {
+    await copyUsersTableAsHtml(getUsersTableHtmlResponse(), getUsersTablePlainTextResponse());
+    const copyUsersResponseBtn = document.getElementById('copyUsersResponseBtn');
+    copyUsersResponseBtn.classList.add('copied');
+    setTimeout(() => {
+        copyUsersResponseBtn.classList.remove('copied');
+    }, 1500);
+});
+
+document.getElementById('clearUsersBtn').addEventListener('click', () => {
+    clearUsersTable();
+    const clearUsersBtn = document.getElementById('clearUsersBtn');
+    clearUsersBtn.classList.add('copied');
+    setTimeout(() => {
+        clearUsersBtn.classList.remove('copied');
+    }, 1500);
+});
+
 clearBtn.addEventListener('click', () => {
     ticketDataInput.value = '';
     updateOutput({});
@@ -1320,12 +1492,16 @@ clearBtn.addEventListener('click', () => {
     document.getElementById('lookupWarning').classList.remove('show');
     notesLog.classList.remove('show');
     clearBtn.classList.remove('show');
+    clearUsersTable();
 });
 
 if (loadFromStorage()) {
     populateDropdowns();
     updateFileStatus(true);
 }
+
+loadUsersTable();
+initUsersEditableCells();
 
 const savedAgentName = localStorage.getItem(AGENT_NAME_KEY);
 if (savedAgentName) {
@@ -1338,7 +1514,7 @@ agentNameInput.addEventListener('input', () => {
 
 clearAllStorageBtn.addEventListener('click', () => {
     console.log('Clear button clicked');
-    if (confirm('This will clear all stored Excel data and agent name. Are you sure?')) {
+    if (confirm('This will clear all stored Excel data, agent name, and the users table. Are you sure?')) {
         console.log('Confirmed, clearing...');
         localStorage.clear();
         workbookData = {
@@ -1362,6 +1538,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         document.getElementById('areaCodes').textContent = '';
         excelFileInput.value = '';
         agentNameInput.value = '';
+        clearUsersTable();
         updateFileStatus(false);
     }
 });
