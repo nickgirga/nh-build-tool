@@ -886,7 +886,8 @@ function parseTicketData(text) {
         supervisor: '',
         startDateFallback: false,
         startDateSource: '',
-        solutionTeam: ''
+        solutionTeam: '',
+        emailDomain: ''
     };
 
     const lines = text.split('\n').map(l => l.trim()).filter(l => l);
@@ -1084,6 +1085,13 @@ for (let i = 0; i < lines.length; i++) {
 
     if (!data.employeeId && data.empType && /temp/i.test(data.empType)) {
         data.employeeId = 'N/A';
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes('Desired Email Domain Name') && lines[i + 1]) {
+            data.emailDomain = lines[i + 1].trim().replace(/^@/, '');
+            break;
+        }
     }
 
     return data;
@@ -1335,6 +1343,7 @@ generateBtn.addEventListener('click', async () => {
     if (!data.supervisor) errors.push("Supervisor");
     if (!data.location) errors.push("Location");
     if (!data.employeeId) errors.push("Employee ID");
+    if (!data.emailDomain) errors.push("Email Domain");
     if (!data.solutionTeam) errors.push("Solution Team Member");
     
     if (workbookData.adPerType.length > 0) {
@@ -1351,6 +1360,11 @@ generateBtn.addEventListener('click', async () => {
         const locationMatched = workbookData.adPerLocation.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()) || '').toLowerCase());
         if (data.location && !locationMatched) {
             errors.push("Location (For Lookup)");
+        }
+        
+        const emailDomainMatched = workbookData.emailDomains.some(domain => domain.toLowerCase() === (data.emailDomain || '').toLowerCase());
+        if (data.emailDomain && !emailDomainMatched) {
+            errors.push("Email Domain (For Lookup)");
         }
     }
     
@@ -1447,6 +1461,17 @@ generateBtn.addEventListener('click', async () => {
         }
         if (data.location) {
             selectDropdownValue('locationSelect', findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()));
+        }
+        if (data.emailDomain) {
+            const emailDomainClean = data.emailDomain.toLowerCase();
+            const emailDomainSelect = document.getElementById('emailDomainSelect');
+            const options = emailDomainSelect.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value.toLowerCase() === emailDomainClean) {
+                    emailDomainSelect.selectedIndex = i;
+                    break;
+                }
+            }
         }
         
         updateLookups();
