@@ -130,7 +130,7 @@ function populateDropdowns() {
         jobTitleSelect.appendChild(option);
     });
     
-    workbookData.locationMap.forEach(loc => {
+    workbookData.adPerLocation.forEach(loc => {
         const option = document.createElement('option');
         option.value = loc[0];
         option.textContent = loc[0];
@@ -221,7 +221,7 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
     const uniqueLocation3 = new RegExp('s.k b......s');
     
     if (textLower && uniqueLocation.test(textLower)) {
-        for (const row of workbookData.locationMap) {
+        for (const row of workbookData.adPerLocation) {
             const excelLocation = row[0];
             if (excelLocation && uniqueLocation.test(excelLocation.toLowerCase())) {
                 return excelLocation;
@@ -230,7 +230,7 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
     }
     
     if (textLower && (uniqueLocation2.test(textLower) || uniqueLocation3.test(textLower))) {
-        for (const row of workbookData.locationMap) {
+        for (const row of workbookData.adPerLocation) {
             const excelLocation = row[0];
             if (excelLocation && uniqueLocation2.test(excelLocation.toLowerCase())) {
                 return excelLocation;
@@ -238,7 +238,7 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
         }
     }
     
-    if (!parsedLocation || !workbookData.locationMap.length) return parsedLocation;
+    if (!parsedLocation || !workbookData.adPerLocation.length) return parsedLocation;
     
     const lowerLocation = parsedLocation.toLowerCase();
     
@@ -254,14 +254,14 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
         return 'Hawaii';
     }
     
-    for (const row of workbookData.locationMap) {
+    for (const row of workbookData.adPerLocation) {
         const excelLocation = row[0];
         if (excelLocation && lowerLocation.includes(excelLocation.toLowerCase())) {
             return excelLocation;
         }
     }
     
-    for (const row of workbookData.locationMap) {
+    for (const row of workbookData.adPerLocation) {
         const excelLocation = row[0];
         if (excelLocation && excelLocation.toLowerCase().includes(lowerLocation)) {
             return excelLocation;
@@ -1251,7 +1251,7 @@ generateBtn.addEventListener('click', () => {
             errors.push("Job Title (For Lookup)");
         }
         
-        const locationMatched = workbookData.locationMap.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()) || '').toLowerCase());
+        const locationMatched = workbookData.adPerLocation.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()) || '').toLowerCase());
         if (data.location && !locationMatched) {
             errors.push("Location (For Lookup)");
         }
