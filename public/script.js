@@ -486,6 +486,22 @@ const cells = {
     employeeId: document.getElementById('employeeId')
 };
 
+const loginInfoCells = {
+    employeeId: document.getElementById('loginEmployeeId'),
+    name: document.getElementById('loginName'),
+    division: document.getElementById('loginDivision'),
+    startDate: document.getElementById('loginStartDate'),
+    workLocation: document.getElementById('loginWorkLocation'),
+    ticket: document.getElementById('loginTicket'),
+    dateReceived: document.getElementById('loginDateReceived'),
+    userName: document.getElementById('loginUserName'),
+    email: document.getElementById('loginEmail'),
+    teamsNumber: document.getElementById('loginTeamsNumber'),
+    password: document.getElementById('loginPassword'),
+    solutionTeam: document.getElementById('loginSolutionTeam'),
+    agentName: document.getElementById('loginAgentName')
+};
+
 const months = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
 function parseDateReceived(str) {
@@ -588,7 +604,8 @@ function parseTicketData(text) {
         cmicCode: '',
         supervisor: '',
         startDateFallback: false,
-        startDateSource: ''
+        startDateSource: '',
+        solutionTeam: ''
     };
 
     const lines = text.split('\n').map(l => l.trim()).filter(l => l);
@@ -753,13 +770,20 @@ for (let i = 0; i < lines.length; i++) {
         }
     }
 
-    for (let i = 0; i < lines.length; i++) {
+for (let i = 0; i < lines.length; i++) {
         if (lines[i] === "Employee's Supervisor") {
             data.supervisor = lines[i + 1] ? lines[i + 1].trim() : '';
             break;
         }
     }
-
+    
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes('Contact information')) {
+            data.solutionTeam = lines[i + 2] ? lines[i + 2].trim() : '';
+            break;
+        }
+    }
+    
     for (let i = 0; i < lines.length; i++) {
         if (lines[i] === 'Location' && lines[i + 1]) {
             data.location = lines[i + 1].trim();
@@ -807,7 +831,30 @@ function updateOutput(data) {
     cells.phone.textContent = data.phone || '';
     cells.employeeId.textContent = data.employeeId || '';
 
+    loginInfoCells.employeeId.textContent = data.employeeId || '';
+    loginInfoCells.name.textContent = data.name || '';
+    loginInfoCells.division.textContent = data.division || '';
+    loginInfoCells.startDate.textContent = data.startDate || '';
+    loginInfoCells.workLocation.textContent = '';
+    loginInfoCells.ticket.textContent = data.ticket || '';
+    loginInfoCells.dateReceived.textContent = data.dateReceived || '';
+    loginInfoCells.userName.textContent = '';
+    loginInfoCells.email.textContent = '';
+    loginInfoCells.teamsNumber.textContent = '';
+    loginInfoCells.password.textContent = '';
+    loginInfoCells.solutionTeam.textContent = data.solutionTeam || '';
+    loginInfoCells.agentName.textContent = agentNameInput.value || '';
+
     Object.values(cells).forEach(cell => {
+        cell.onclick = async () => {
+            if (cell.textContent) {
+                await navigator.clipboard.writeText(cell.textContent);
+                showToast();
+            }
+        };
+    });
+    
+    Object.values(loginInfoCells).forEach(cell => {
         cell.onclick = async () => {
             if (cell.textContent) {
                 await navigator.clipboard.writeText(cell.textContent);
@@ -832,6 +879,24 @@ function getRowString() {
         cells.location.textContent,
         cells.phone.textContent,
         cells.employeeId.textContent
+    ].join('\t');
+}
+
+function getLoginInfoRowString() {
+    return [
+        loginInfoCells.employeeId.textContent,
+        loginInfoCells.name.textContent,
+        loginInfoCells.division.textContent,
+        loginInfoCells.startDate.textContent,
+        loginInfoCells.workLocation.textContent,
+        loginInfoCells.ticket.textContent,
+        loginInfoCells.dateReceived.textContent,
+        loginInfoCells.userName.textContent,
+        loginInfoCells.email.textContent,
+        loginInfoCells.teamsNumber.textContent,
+        loginInfoCells.password.textContent,
+        loginInfoCells.solutionTeam.textContent,
+        loginInfoCells.agentName.textContent
     ].join('\t');
 }
 
@@ -869,7 +934,7 @@ function formatCmicCode(codeStr) {
 }
 
 generateBtn.addEventListener('click', () => {
-    infoLog.textContent = 'While this tool aims to reduce the tedium of moving data around and to make unique requests stand out, you should not rely on it for all of your information. You must manually review the ticket when you work the account.';
+    infoLog.textContent = 'While this tool aims to reduce the tedium of moving data around and to make unique requests stand out, you should not rely on it for all of your information. You must manually review the ticket when you work the account. Always double check and validate the data before using it!';
     infoLog.classList.add('show');
     
     const rehirePattern = /\bre\s*hire\b/i;
@@ -966,6 +1031,7 @@ generateBtn.addEventListener('click', () => {
     if (!data.supervisor) errors.push("Supervisor");
     if (!data.location) errors.push("Location");
     if (!data.employeeId) errors.push("Employee ID");
+    if (!data.solutionTeam) errors.push("Solution Team Member");
     
     if (workbookData.adPerType.length > 0) {
         const empTypeMatched = workbookData.adPerType.some(row => row[0] && row[0].toLowerCase() === (data.empTypeForLookup || '').toLowerCase());
@@ -1087,6 +1153,7 @@ generateBtn.addEventListener('click', () => {
     clearBtn.classList.add('show');
     resetAnimations();
     outputSection.style.display = 'flex';
+    document.getElementById('loginInfoSection').style.display = 'flex';
     
     const adFormatted = formatAdDivision(data.division);
     adDivisionEl.textContent = adFormatted;
@@ -1116,12 +1183,17 @@ generateBtn.addEventListener('click', () => {
 
 function resetAnimations() {
     const sections = [outputSection, adSection, cmicSection, supervisorSection];
+    const loginInfoSection = document.getElementById('loginInfoSection');
     
     sections.forEach(section => {
         section.style.display = 'none';
         section.style.animation = 'none';
         section.style.animationDelay = '';
     });
+    
+    if (loginInfoSection) {
+        loginInfoSection.style.display = 'none';
+    }
     
     setTimeout(() => {
         sections.forEach(section => {
@@ -1136,6 +1208,15 @@ copyBtn.addEventListener('click', async () => {
     copyBtn.classList.add('copied');
     setTimeout(() => {
         copyBtn.classList.remove('copied');
+    }, 1500);
+});
+
+document.getElementById('copyLoginInfoBtn').addEventListener('click', async () => {
+    const rowString = getLoginInfoRowString();
+    await navigator.clipboard.writeText(rowString);
+    document.getElementById('copyLoginInfoBtn').classList.add('copied');
+    setTimeout(() => {
+        document.getElementById('copyLoginInfoBtn').classList.remove('copied');
     }, 1500);
 });
 
