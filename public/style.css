@@ -137,6 +137,31 @@ select:hover {
     border-color: var(--primary);
 }
 
+#emailDomainOtherRow input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--surface-light);
+    color: var(--text);
+    font-size: 14px;
+    cursor: text;
+    transition: all 0.15s ease;
+    max-width: none;
+    margin: 0;
+    display: block;
+    text-align: left;
+}
+
+#emailDomainOtherRow input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+#emailDomainOtherRow input[type="text"]:hover {
+    border-color: var(--primary);
+}
+
 .lookup-section {
     display: flex;
     flex-direction: column;

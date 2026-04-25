@@ -120,12 +120,12 @@ function populateDropdowns() {
     const jobTitleSelect = document.getElementById('jobTitleSelect');
     const locationSelect = document.getElementById('locationSelect');
     const emailDomainSelect = document.getElementById('emailDomainSelect');
-    
+
     jobTypeSelect.innerHTML = '';
     jobTitleSelect.innerHTML = '';
     locationSelect.innerHTML = '';
     emailDomainSelect.innerHTML = '';
-    
+
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = 'Select...';
@@ -134,34 +134,39 @@ function populateDropdowns() {
     jobTitleSelect.appendChild(defaultOption.cloneNode(true));
     locationSelect.appendChild(defaultOption.cloneNode(true));
     emailDomainSelect.appendChild(defaultOption.cloneNode(true));
-    
+
     workbookData.adPerType.forEach(type => {
         const option = document.createElement('option');
         option.value = type[0];
         option.textContent = type[0];
         jobTypeSelect.appendChild(option);
     });
-    
+
     workbookData.jobTitles.forEach(title => {
         const option = document.createElement('option');
         option.value = title[0];
         option.textContent = title[0];
         jobTitleSelect.appendChild(option);
     });
-    
+
     workbookData.adPerLocation.forEach(loc => {
         const option = document.createElement('option');
         option.value = loc[0];
         option.textContent = loc[0];
         locationSelect.appendChild(option);
     });
-    
+
     workbookData.emailDomains.forEach(domain => {
         const option = document.createElement('option');
         option.value = domain;
         option.textContent = domain;
         emailDomainSelect.appendChild(option);
     });
+
+    const otherOption = document.createElement('option');
+    otherOption.value = '__other__';
+    otherOption.textContent = 'Other';
+    emailDomainSelect.appendChild(otherOption);
 }
 
 function vLookup(lookupValue, sheetData, keyColIndex, returnColIndex) {
@@ -1483,7 +1488,9 @@ generateBtn.addEventListener('click', async () => {
         document.getElementById('jobTitleSelect').selectedIndex = 0;
         document.getElementById('locationSelect').selectedIndex = 0;
         document.getElementById('emailDomainSelect').selectedIndex = 0;
-        
+        document.getElementById('emailDomainOtherRow').style.display = 'none';
+        document.getElementById('emailDomainOther').value = '';
+
         if (data.empType) {
             selectDropdownValue('jobTypeSelect', data.empTypeForLookup);
         }
@@ -1495,13 +1502,13 @@ generateBtn.addEventListener('click', async () => {
         }
         if (data.emailDomain) {
             const emailDomainClean = data.emailDomain.toLowerCase();
-            const emailDomainSelect = document.getElementById('emailDomainSelect');
-            const options = emailDomainSelect.options;
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value.toLowerCase() === emailDomainClean) {
-                    emailDomainSelect.selectedIndex = i;
-                    break;
-                }
+            const matchedDomain = workbookData.emailDomains.find(d => d.toLowerCase() === emailDomainClean);
+            if (matchedDomain) {
+                document.getElementById('emailDomainSelect').value = matchedDomain;
+            } else {
+                document.getElementById('emailDomainSelect').value = '__other__';
+                document.getElementById('emailDomainOtherRow').style.display = 'flex';
+                document.getElementById('emailDomainOther').value = data.emailDomain;
             }
         }
         
@@ -1676,6 +1683,18 @@ document.getElementById('clearUsersBtn').addEventListener('click', () => {
 
 document.getElementById('generatePasswordBtn').addEventListener('click', () => generateUsersPassword());
 
+document.getElementById('emailDomainSelect').addEventListener('change', () => {
+    const emailDomainSelect = document.getElementById('emailDomainSelect');
+    const emailDomainOtherRow = document.getElementById('emailDomainOtherRow');
+    const emailDomainOther = document.getElementById('emailDomainOther');
+    if (emailDomainSelect.value === '__other__') {
+        emailDomainOtherRow.style.display = 'flex';
+    } else {
+        emailDomainOtherRow.style.display = 'none';
+        emailDomainOther.value = '';
+    }
+});
+
 clearBtn.addEventListener('click', () => {
     ticketDataInput.value = '';
     updateOutput({});
@@ -1731,6 +1750,8 @@ clearAllStorageBtn.addEventListener('click', () => {
         document.getElementById('jobTitleSelect').innerHTML = '';
         document.getElementById('locationSelect').innerHTML = '';
         document.getElementById('emailDomainSelect').innerHTML = '';
+        document.getElementById('emailDomainOtherRow').style.display = 'none';
+        document.getElementById('emailDomainOther').value = '';
         document.getElementById('adRolesPerType').textContent = '';
         document.getElementById('adRolesPerJobTitle').textContent = '';
         document.getElementById('adRolesPerLocation').textContent = '';
