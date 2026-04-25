@@ -586,6 +586,20 @@ function initUsersEditableCells() {
     });
 }
 
+function initUsersLabelCells() {
+    const labels = document.querySelectorAll('.users-table .label-cell');
+    labels.forEach(label => {
+        label.style.cursor = 'pointer';
+        label.addEventListener('click', async () => {
+            const valueCell = label.nextElementSibling;
+            if (valueCell && valueCell.textContent) {
+                await navigator.clipboard.writeText(valueCell.textContent);
+                showToast();
+            }
+        });
+    });
+}
+
 function saveUsersTable() {
     const data = {
         ticket: usersCells.ticket.textContent,
@@ -620,6 +634,51 @@ function clearUsersTable() {
         cell.textContent = '';
     });
     localStorage.removeItem(USERS_TABLE_KEY);
+}
+
+const WORD_LIST_URL = 'https://cdn.jsdelivr.net/gh/bitcoin/bips@master/bip-0039/english.txt';
+
+let _wordListPromise = null;
+
+function loadWordList() {
+    if (_wordListPromise) return _wordListPromise;
+
+    _wordListPromise = fetch(WORD_LIST_URL)
+        .then(r => r.text())
+        .then(text => {
+            return text.split('\n')
+                .map(w => w.trim())
+                .filter(w => w.length >= 4 && w.length <= 8);
+        })
+        .catch(err => {
+            console.error('Failed to load word list:', err);
+            _wordListPromise = null;
+            throw err;
+        });
+
+    return _wordListPromise;
+}
+
+// Pre-fetch on page load
+loadWordList();
+
+async function generateUsersPassword() {
+    const words = await loadWordList();
+    const arr = new Uint32Array(3);
+    crypto.getRandomValues(arr);
+    const chosen = [
+        words[arr[0] % words.length],
+        words[arr[1] % words.length],
+        words[arr[2] % words.length]
+    ];
+    const password = chosen.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('') + Math.floor(Math.random() * 10);
+
+    usersCells.password.textContent = password;
+    saveUsersTable();
+
+    const btn = document.getElementById('generatePasswordBtn');
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 1500);
 }
 
 function getUsersTableHtml() {
@@ -1154,7 +1213,7 @@ function formatCmicCode(codeStr) {
     return codeStr;
 }
 
-generateBtn.addEventListener('click', () => {
+generateBtn.addEventListener('click', async () => {
     infoLog.textContent = 'While this tool aims to reduce the tedium of moving data around and to make unique requests stand out, you should not rely on it for all of your information. You must manually review the ticket when you work the account. Always double check and validate the data before using it!';
     infoLog.classList.add('show');
     
@@ -1414,6 +1473,8 @@ generateBtn.addEventListener('click', () => {
         supervisorSection.style.display = 'flex';
     }, 300);
     supervisorSection.style.animationDelay = '0.3s';
+
+    await generateUsersPassword();
 });
 
 function resetAnimations() {
@@ -1531,6 +1592,8 @@ document.getElementById('clearUsersBtn').addEventListener('click', () => {
     }, 1500);
 });
 
+document.getElementById('generatePasswordBtn').addEventListener('click', () => generateUsersPassword());
+
 clearBtn.addEventListener('click', () => {
     ticketDataInput.value = '';
     updateOutput({});
@@ -1556,6 +1619,7 @@ if (loadFromStorage()) {
 
 loadUsersTable();
 initUsersEditableCells();
+initUsersLabelCells();
 
 const savedAgentName = localStorage.getItem(AGENT_NAME_KEY);
 if (savedAgentName) {
