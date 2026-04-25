@@ -18,7 +18,8 @@ let workbookData = {
     adPerLocation: [],
     jobSoftwares: [],
     cmic: [],
-    cmicLocationMap: []
+    cmicLocationMap: [],
+    emailDomains: []
 };
 
 function parseSheetToArrays(worksheet, headerRow = 1) {
@@ -57,6 +58,18 @@ function parseWorkbook(wb) {
         return [...new Set(sheetData.map(row => row[0]).filter(v => v))];
     };
     
+    const emailDomains = [];
+    if (wb.Sheets['Master Search']) {
+        const masterSheet = wb.Sheets['Master Search'];
+        for (let row = 7; row <= 11; row++) {
+            const cellRef = XLS.utils.encode_cell({ r: row, c: 9 });
+            const cell = masterSheet[cellRef];
+            if (cell && cell.v) {
+                emailDomains.push(String(cell.v).trim());
+            }
+        }
+    }
+
     workbookData = {
         adPerType: sheets['AD Per Type'] || [],
         jobTitles: sheets['Job Titles'] || [],
@@ -64,7 +77,8 @@ function parseWorkbook(wb) {
         adPerLocation: sheets['AD Per Location'] || [],
         jobSoftwares: sheets['Job Softwares'] || [],
         cmic: sheets['CMiC'] || [],
-        cmicLocationMap: sheets['CMiC Location Map'] || []
+        cmicLocationMap: sheets['CMiC Location Map'] || [],
+        emailDomains: emailDomains
     };
     
     const dataToStore = {
@@ -89,7 +103,8 @@ function loadFromStorage() {
                 adPerLocation: data.adPerLocation || [],
                 jobSoftwares: data.jobSoftwares || [],
                 cmic: data.cmic || [],
-                cmicLocationMap: data.cmicLocationMap || []
+                cmicLocationMap: data.cmicLocationMap || [],
+                emailDomains: data.emailDomains || []
             };
             return true;
         } catch (e) {
@@ -104,10 +119,12 @@ function populateDropdowns() {
     const jobTypeSelect = document.getElementById('jobTypeSelect');
     const jobTitleSelect = document.getElementById('jobTitleSelect');
     const locationSelect = document.getElementById('locationSelect');
+    const emailDomainSelect = document.getElementById('emailDomainSelect');
     
     jobTypeSelect.innerHTML = '';
     jobTitleSelect.innerHTML = '';
     locationSelect.innerHTML = '';
+    emailDomainSelect.innerHTML = '';
     
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
@@ -116,6 +133,7 @@ function populateDropdowns() {
     jobTypeSelect.appendChild(defaultOption.cloneNode(true));
     jobTitleSelect.appendChild(defaultOption.cloneNode(true));
     locationSelect.appendChild(defaultOption.cloneNode(true));
+    emailDomainSelect.appendChild(defaultOption.cloneNode(true));
     
     workbookData.adPerType.forEach(type => {
         const option = document.createElement('option');
@@ -136,6 +154,13 @@ function populateDropdowns() {
         option.value = loc[0];
         option.textContent = loc[0];
         locationSelect.appendChild(option);
+    });
+    
+    workbookData.emailDomains.forEach(domain => {
+        const option = document.createElement('option');
+        option.value = domain;
+        option.textContent = domain;
+        emailDomainSelect.appendChild(option);
     });
 }
 
@@ -1412,6 +1437,7 @@ generateBtn.addEventListener('click', async () => {
         document.getElementById('jobTypeSelect').selectedIndex = 0;
         document.getElementById('jobTitleSelect').selectedIndex = 0;
         document.getElementById('locationSelect').selectedIndex = 0;
+        document.getElementById('emailDomainSelect').selectedIndex = 0;
         
         if (data.empType) {
             selectDropdownValue('jobTypeSelect', data.empTypeForLookup);
@@ -1642,11 +1668,13 @@ clearAllStorageBtn.addEventListener('click', () => {
             adPerLocation: [],
             jobSoftwares: [],
             cmic: [],
-            cmicLocationMap: []
+            cmicLocationMap: [],
+            emailDomains: []
         };
         document.getElementById('jobTypeSelect').innerHTML = '';
         document.getElementById('jobTitleSelect').innerHTML = '';
         document.getElementById('locationSelect').innerHTML = '';
+        document.getElementById('emailDomainSelect').innerHTML = '';
         document.getElementById('adRolesPerType').textContent = '';
         document.getElementById('adRolesPerJobTitle').textContent = '';
         document.getElementById('adRolesPerLocation').textContent = '';
