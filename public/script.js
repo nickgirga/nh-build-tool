@@ -1328,6 +1328,15 @@ generateBtn.addEventListener('click', () => {
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
         document.getElementById('lookupWarning').classList.add('show');
+        
+        const isMirror = mirrorPattern.test(ticketDataInput.value);
+        if (!isMirror && !usersCells.cmicAccount.textContent.trim()) {
+            const cmicSettings = document.getElementById('cmicUserSettings').textContent;
+            const cmicAccess = document.getElementById('cmicUserAccess').textContent;
+            if (cmicSettings && cmicAccess && !cmicSettings.includes('Select') && !cmicAccess.includes('Select')) {
+                usersCells.cmicAccount.textContent = `${cmicSettings} - ${cmicAccess}`;
+            }
+        }
     }
     
     clearBtn.classList.add('show');
