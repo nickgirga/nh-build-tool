@@ -3,6 +3,7 @@ const XLS = window.XLSX || window.xlsx;
 const STORAGE_KEY = 'nhbuildtool_workbook';
 const AGENT_NAME_KEY = 'nhbuildtool_agentName';
 const USERS_TABLE_KEY = 'nhbuildtool_usersTable';
+const MIRROR_PATTERN = /\bmirror\b/i;
 
 const excelFileInput = document.getElementById('excelFile');
 // const clearExcelBtn = document.getElementById('clearExcelBtn'); // removed - use "Clear All Local Storage" instead
@@ -405,11 +406,24 @@ document.getElementById('jobTypeSelect').addEventListener('change', () => {
 document.getElementById('jobTitleSelect').addEventListener('change', () => {
     document.getElementById('lookupWarning').classList.remove('show');
     updateLookups();
+    updateUsersTableCmic();
 });
 document.getElementById('locationSelect').addEventListener('change', () => {
     document.getElementById('lookupWarning').classList.remove('show');
     updateLookups();
+    updateUsersTableCmic();
 });
+
+function updateUsersTableCmic() {
+    const isMirror = MIRROR_PATTERN.test(ticketDataInput.value);
+    if (isMirror) return;
+    
+    const cmicSettings = document.getElementById('cmicUserSettings').textContent;
+    const cmicAccess = document.getElementById('cmicUserAccess').textContent;
+    if (cmicSettings && cmicAccess && !cmicSettings.includes('Select') && !cmicAccess.includes('Select')) {
+        usersCells.cmicAccount.textContent = `${cmicSettings} - ${cmicAccess}`;
+    }
+}
 
 document.getElementById('copyAdRolesPerTypeBtn').addEventListener('click', async () => {
     await navigator.clipboard.writeText(document.getElementById('adRolesPerType').textContent);
@@ -1145,13 +1159,12 @@ generateBtn.addEventListener('click', () => {
     infoLog.classList.add('show');
     
     const rehirePattern = /\bre\s*hire\b/i;
-    const mirrorPattern = /\bmirror\b/i;
     const nonStandardPattern = /Non-Standard Computer/i;
     const notes = [];
     if (rehirePattern.test(ticketDataInput.value)) {
         notes.push('This ticket appears to be for a rehire.');
     }
-    if (mirrorPattern.test(ticketDataInput.value)) {
+    if (MIRROR_PATTERN.test(ticketDataInput.value)) {
         notes.push('This ticket appears to request a mirror.');
     }
     if (nonStandardPattern.test(ticketDataInput.value)) {
@@ -1356,13 +1369,9 @@ generateBtn.addEventListener('click', () => {
         resultsSection.style.display = 'flex';
         document.getElementById('lookupWarning').classList.add('show');
         
-        const isMirror = mirrorPattern.test(ticketDataInput.value);
+        const isMirror = MIRROR_PATTERN.test(ticketDataInput.value);
         if (!isMirror && !usersCells.cmicAccount.textContent.trim()) {
-            const cmicSettings = document.getElementById('cmicUserSettings').textContent;
-            const cmicAccess = document.getElementById('cmicUserAccess').textContent;
-            if (cmicSettings && cmicAccess && !cmicSettings.includes('Select') && !cmicAccess.includes('Select')) {
-                usersCells.cmicAccount.textContent = `${cmicSettings} - ${cmicAccess}`;
-            }
+            updateUsersTableCmic();
         }
     }
     
