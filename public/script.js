@@ -523,10 +523,37 @@ const usersCells = {
     password: document.getElementById('usersPassword')
 };
 
+function formatPhoneNumber(text) {
+    const digits = text.replace(/\D/g, '');
+    if (digits.length === 10) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    }
+    return text;
+}
+
 function initUsersEditableCells() {
     Object.values(usersCells).forEach(cell => {
         cell.contentEditable = 'true';
         cell.addEventListener('input', () => {
+            if (cell === usersCells.teams) {
+                const digits = cell.textContent.replace(/\D/g, '');
+                if (digits.length === 10) {
+                    const formatted = formatPhoneNumber(cell.textContent);
+                    if (cell.textContent !== formatted) {
+                        const selection = window.getSelection();
+                        const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+                        const offset = range ? range.startOffset : cell.textContent.length;
+                        cell.textContent = formatted;
+                        if (range) {
+                            const newOffset = Math.min(offset, formatted.length);
+                            range.setStart(cell.firstChild || cell, newOffset);
+                            range.collapse(true);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        }
+                    }
+                }
+            }
             saveUsersTable();
         });
         cell.addEventListener('keydown', (e) => {
