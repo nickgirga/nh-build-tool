@@ -846,7 +846,6 @@ button {
     border-collapse: collapse;
     border: 1px solid var(--border);
     width: auto;
-    max-width: 400px;
     margin: 12px auto 0;
 }
 
@@ -867,7 +866,8 @@ button {
     font-size: 14px;
     font-weight: 500;
     color: var(--subtext);
-    width: 40%;
+    width: 120px;
+    white-space: nowrap;
 }
 
 .users-table .editable-cell {
@@ -878,6 +878,7 @@ button {
     border-radius: 4px;
     padding: 8px 12px;
     min-height: 36px;
+    min-width: 300px;
     cursor: text;
     outline: none;
     transition: all 0.15s ease;
