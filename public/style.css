@@ -137,6 +137,22 @@ select:hover {
     border-color: var(--primary);
 }
 
+#emailDomainOtherRow {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    overflow: hidden;
+    margin-top: -16px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, margin-top 0.3s ease;
+}
+
+#emailDomainOtherRow.show {
+    max-height: 100px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 0;
+}
+
 #emailDomainOtherRow input[type="text"] {
     width: 100%;
     padding: 10px 12px;

@@ -644,6 +644,14 @@ function initUsersLabelCells() {
     });
 }
 
+function showEmailDomainOther() {
+    document.getElementById('emailDomainOtherRow').classList.add('show');
+}
+
+function hideEmailDomainOther() {
+    document.getElementById('emailDomainOtherRow').classList.remove('show');
+}
+
 function saveUsersTable() {
     const data = {
         ticket: usersCells.ticket.textContent,
@@ -1488,7 +1496,7 @@ generateBtn.addEventListener('click', async () => {
         document.getElementById('jobTitleSelect').selectedIndex = 0;
         document.getElementById('locationSelect').selectedIndex = 0;
         document.getElementById('emailDomainSelect').selectedIndex = 0;
-        document.getElementById('emailDomainOtherRow').style.display = 'none';
+        hideEmailDomainOther();
         document.getElementById('emailDomainOther').value = '';
 
         if (data.empType) {
@@ -1507,7 +1515,7 @@ generateBtn.addEventListener('click', async () => {
                 document.getElementById('emailDomainSelect').value = matchedDomain;
             } else {
                 document.getElementById('emailDomainSelect').value = '__other__';
-                document.getElementById('emailDomainOtherRow').style.display = 'flex';
+                showEmailDomainOther();
                 document.getElementById('emailDomainOther').value = data.emailDomain;
             }
         }
@@ -1685,12 +1693,11 @@ document.getElementById('generatePasswordBtn').addEventListener('click', () => g
 
 document.getElementById('emailDomainSelect').addEventListener('change', () => {
     const emailDomainSelect = document.getElementById('emailDomainSelect');
-    const emailDomainOtherRow = document.getElementById('emailDomainOtherRow');
     const emailDomainOther = document.getElementById('emailDomainOther');
     if (emailDomainSelect.value === '__other__') {
-        emailDomainOtherRow.style.display = 'flex';
+        showEmailDomainOther();
     } else {
-        emailDomainOtherRow.style.display = 'none';
+        hideEmailDomainOther();
         emailDomainOther.value = '';
     }
 });
@@ -1750,7 +1757,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         document.getElementById('jobTitleSelect').innerHTML = '';
         document.getElementById('locationSelect').innerHTML = '';
         document.getElementById('emailDomainSelect').innerHTML = '';
-        document.getElementById('emailDomainOtherRow').style.display = 'none';
+        hideEmailDomainOther();
         document.getElementById('emailDomainOther').value = '';
         document.getElementById('adRolesPerType').textContent = '';
         document.getElementById('adRolesPerJobTitle').textContent = '';
