@@ -214,6 +214,7 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
     
     const uniqueLocation = new RegExp('s.......n e....y');
     const uniqueLocation2 = new RegExp('s.k c..........n');
+    const uniqueLocation3 = new RegExp('s.k b......s');
     
     if (textLower && uniqueLocation.test(textLower)) {
         for (const row of workbookData.locationMap) {
@@ -224,7 +225,7 @@ function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
         }
     }
     
-    if (textLower && uniqueLocation2.test(textLower)) {
+    if (textLower && (uniqueLocation2.test(textLower) || uniqueLocation3.test(textLower))) {
         for (const row of workbookData.locationMap) {
             const excelLocation = row[0];
             if (excelLocation && uniqueLocation2.test(excelLocation.toLowerCase())) {
@@ -986,6 +987,23 @@ generateBtn.addEventListener('click', () => {
     if (!data.location) errors.push("Location");
     if (!data.employeeId) errors.push("Employee ID");
     
+    if (workbookData.adPerType.length > 0) {
+        const empTypeMatched = workbookData.adPerType.some(row => row[0] && row[0].toLowerCase() === (data.empTypeForLookup || '').toLowerCase());
+        if (data.empTypeForLookup && !empTypeMatched) {
+            errors.push("Employee Type (For Lookup)");
+        }
+        
+        const jobTitleMatched = workbookData.jobTitles.some(row => row[0] && row[0].toLowerCase() === (findBestJobTitleMatch(data.jobTitle) || '').toLowerCase());
+        if (data.jobTitle && !jobTitleMatched) {
+            errors.push("Job Title (For Lookup)");
+        }
+        
+        const locationMatched = workbookData.locationMap.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()) || '').toLowerCase());
+        if (data.location && !locationMatched) {
+            errors.push("Location (For Lookup)");
+        }
+    }
+    
     if (errors.length > 0) {
         errorLog.innerHTML = `<div class="error-title">Failed to parse:</div><ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
         errorLog.classList.add('has-errors');
@@ -1065,6 +1083,10 @@ generateBtn.addEventListener('click', () => {
     if (workbookData.adPerType.length > 0) {
         const lookupSection = document.getElementById('lookupSection');
         const resultsSection = document.getElementById('resultsSection');
+        
+        document.getElementById('jobTypeSelect').selectedIndex = 0;
+        document.getElementById('jobTitleSelect').selectedIndex = 0;
+        document.getElementById('locationSelect').selectedIndex = 0;
         
         if (data.empType) {
             selectDropdownValue('jobTypeSelect', data.empTypeForLookup);
