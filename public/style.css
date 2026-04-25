@@ -223,6 +223,28 @@ select:hover {
     color: var(--subtext);
 }
 
+.lookup-row.mirror-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.lookup-row.mirror-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.lookup-row.mirror-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+}
+
 .results-section {
     display: flex;
     flex-direction: column;

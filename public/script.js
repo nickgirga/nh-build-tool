@@ -459,9 +459,8 @@ document.getElementById('locationSelect').addEventListener('change', () => {
 });
 
 function updateUsersTableCmic() {
-    const isMirror = MIRROR_PATTERN.test(ticketDataInput.value);
-    if (isMirror) return;
-    
+    if (document.getElementById('mirrorCheckbox').checked) return;
+
     const cmicSettings = document.getElementById('cmicUserSettings').textContent;
     const cmicAccess = document.getElementById('cmicUserAccess').textContent;
     if (cmicSettings && cmicAccess && !cmicSettings.includes('Select') && !cmicAccess.includes('Select')) {
@@ -1526,6 +1525,7 @@ generateBtn.addEventListener('click', async () => {
         document.getElementById('lookupWarning').classList.add('show');
         
         const isMirror = MIRROR_PATTERN.test(ticketDataInput.value);
+        document.getElementById('mirrorCheckbox').checked = isMirror;
         if (!isMirror && !usersCells.cmicAccount.textContent.trim()) {
             updateUsersTableCmic();
         }
@@ -1702,6 +1702,12 @@ document.getElementById('emailDomainSelect').addEventListener('change', () => {
     }
 });
 
+document.getElementById('mirrorCheckbox').addEventListener('change', () => {
+    if (!document.getElementById('mirrorCheckbox').checked) {
+        updateUsersTableCmic();
+    }
+});
+
 clearBtn.addEventListener('click', () => {
     ticketDataInput.value = '';
     updateOutput({});
@@ -1717,6 +1723,7 @@ clearBtn.addEventListener('click', () => {
     document.getElementById('lookupWarning').classList.remove('show');
     notesLog.classList.remove('show');
     clearBtn.classList.remove('show');
+    document.getElementById('mirrorCheckbox').checked = false;
     clearUsersTable();
 });
 
