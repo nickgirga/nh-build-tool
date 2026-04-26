@@ -285,6 +285,16 @@ export function parseTicketData(text) {
         }
     }
 
+    // If CMiC Company Code is "Other", fallback to "CMiC Company Code not listed above"
+    if (/other/i.test(data.cmicCode)) {
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes('CMiC Company Code not listed above') && lines[i + 1]) {
+                data.cmicCode = lines[i + 1].trim();
+                break;
+            }
+        }
+    }
+
     // Extract supervisor
     for (let i = 0; i < lines.length; i++) {
         if (lines[i] === "Employee's Supervisor") {
