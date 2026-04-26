@@ -409,10 +409,13 @@ select:hover {
     border-radius: 8px;
     color: var(--subtext);
     font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .error-log.has-errors {
     display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
 }
 
 .warning-log {
@@ -424,10 +427,13 @@ select:hover {
     border-radius: 8px;
     color: var(--subtext);
     font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .warning-log.has-warnings {
     display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
 }
 
 .sla-warning-log {
@@ -439,10 +445,13 @@ select:hover {
     border-radius: 8px;
     color: #f38ba8;
     font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .sla-warning-log.has-sla-warning {
     display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
 }
 
 .sla-warning-log .sla-warning-title {
@@ -464,10 +473,13 @@ select:hover {
     border-radius: 8px;
     color: #f38ba8;
     font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .info-log.show {
     display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
 }
 
 .notes-log {
@@ -479,10 +491,13 @@ select:hover {
     border-radius: 8px;
     color: #f9e05f;
     font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .notes-log.show {
     display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
 }
 
 .notes-log ul {
