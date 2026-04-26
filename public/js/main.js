@@ -142,6 +142,11 @@ document.getElementById('copyAllAdRolesBtn').addEventListener('click', () => {
 // --- Main Generate Button ---
 
 generateBtn.addEventListener('click', async () => {
+    if (!ticketDataInput.value.includes('HR: New Hire')) {
+        alert("The Pasted Ticket Data doesn't appear to be valid. Ensure you have selected all text on the ticket before copying and pasting into the text field.");
+        return;
+    }
+
     showInfoBanner();
 
     const agentNameBanner = document.getElementById('agentNameBanner');
