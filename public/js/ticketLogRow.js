@@ -32,7 +32,7 @@ export function updateTicketLogCells(data) {
     cells.empType.textContent = tableRowEmpType;
     cells.startDate.textContent = data.startDate || '';
     cells.division.textContent = data.division || '';
-    cells.location.textContent = data.location || '';
+    cells.location.textContent = (data.location || '').replace(/\(.*?\)/g, '').trim();
     cells.phone.textContent = data.phone || '';
     cells.employeeId.textContent = data.employeeId || '';
 
