@@ -17,7 +17,8 @@
 
         <div class="form-group" style="text-align: center;">
             <label for="excelFile" style="display: block; margin-bottom: 8px;">Select Excel Workbook (.xlsx)</label>
-            <input type="file" id="excelFile" accept=".xlsx" />
+            <input type="file" id="excelFile" accept=".xlsx" style="display: none;" />
+            <label for="excelFile" class="file-btn"><span class="material-symbols-outlined">folder_open</span>Choose File</label>
             <p class="file-status" id="fileStatus"></p>
         </div>
 
@@ -32,14 +33,14 @@
         </div>
 
         <div class="btn-wrapper">
-            <button class="primary-btn" id="generateBtn">Parse Ticket Info</button>
-            <button class="secondary-btn" id="clearBtn">Clear Data</button>
+            <button class="primary-btn" id="generateBtn"><span class="material-symbols-outlined">content_paste_search</span>Parse Ticket Info</button>
+            <button class="secondary-btn" id="clearBtn"><span class="material-symbols-outlined">content_paste_off</span>Clear Data</button>
         </div>
         
         <div class="error-log" id="errorLog"></div>
         <div class="warning-log" id="warningLog"></div>
-        <div class="sla-warning-log" id="slaWarningLog"></div>
         <div class="info-log" id="infoLog"></div>
+        <div class="sla-warning-log" id="slaWarningLog"></div>
         <div class="notes-log" id="notesLogId"></div>
 
         <div class="clipboard-section" id="clipboardSection" style="display: none;">
@@ -311,7 +312,7 @@
         </div>
 
         <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-            <button type="button" class="secondary-btn danger" id="clearAllStorageBtn">Clear All Local Storage</button>
+            <button type="button" class="secondary-btn danger" id="clearAllStorageBtn"><span class="material-symbols-outlined">database_off</span>Clear All Local Storage</button>
         </div>
     </div>
 

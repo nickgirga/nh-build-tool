@@ -448,6 +448,7 @@ excelFileInput.addEventListener('change', async (e) => {
             console.error('Error parsing Excel file:', error);
             fileStatus.textContent = 'Error parsing file. Please ensure it is a valid .xlsx file.';
             fileStatus.classList.remove('loaded');
+            fileStatus.classList.add('show');
         }
     };
     reader.readAsArrayBuffer(file);
@@ -458,7 +459,7 @@ excelFileInput.addEventListener('change', async (e) => {
 function updateFileStatus(loaded) {
     const lookupSection = document.getElementById('lookupSection');
     const resultsSection = document.getElementById('resultsSection');
-    
+
     if (loaded && workbookData.adPerType.length > 0) {
         const stored = localStorage.getItem(STORAGE_KEY);
         let dateStr = '';
@@ -476,12 +477,14 @@ function updateFileStatus(loaded) {
         }
         fileStatus.textContent = 'Excel data loaded from local storage' + dateStr;
         fileStatus.classList.add('loaded');
+        fileStatus.classList.add('show');
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
         updateLookups();
     } else {
         fileStatus.textContent = '';
         fileStatus.classList.remove('loaded');
+        fileStatus.classList.remove('show');
         lookupSection.style.display = 'none';
         resultsSection.style.display = 'none';
     }

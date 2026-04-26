@@ -91,25 +91,47 @@ input[type="file"] {
     cursor: pointer;
 }
 
-input[type="file"]::file-selector-button {
+.file-btn {
     background-color: var(--primary);
     color: var(--bg);
     border: none;
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
-    margin-right: 12px;
     font-weight: 500;
+    transition: transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
 }
 
-input[type="file"]::file-selector-button:hover {
+.file-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.file-btn:hover {
     background-color: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+.file-btn:active {
+    transform: scale(1);
 }
 
 .file-status {
     font-size: 12px;
     color: var(--subtext);
     margin: 0;
+    margin-top: 4px;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.file-status.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .file-status.loaded {
@@ -385,7 +407,7 @@ select:hover {
 }
 
 #clearBtn.show {
-    display: inline-block;
+    display: inline-flex;
     animation: slideIn 0.3s ease;
 }
 
@@ -590,6 +612,12 @@ input[type="text"] {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 4px;
+}
+
+.form-group label[for="ticketData"] {
+    display: block;
+    margin-bottom: 4px;
 }
 
 input[type="text"]:focus {
@@ -616,6 +644,9 @@ button {
     background-color: var(--primary);
     color: var(--bg);
     align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .primary-btn:hover {
@@ -632,6 +663,9 @@ button {
     color: var(--text);
     border: 1px solid var(--border);
     align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .secondary-btn:hover {
@@ -647,6 +681,9 @@ button {
     border-color: #f38ba8;
     color: #f38ba8;
     background-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .secondary-btn.danger:hover {
