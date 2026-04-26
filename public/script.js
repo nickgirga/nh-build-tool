@@ -25,7 +25,8 @@ let workbookData = {
     cmicPassword: '',
     emailTemplate1: '',
     emailTemplate2: '',
-    emailTemplate3: ''
+    emailTemplate3: '',
+    adobeCcAdGroup: ''
 };
 
 function parseSheetToArrays(worksheet, headerRow = 1) {
@@ -71,6 +72,7 @@ function parseWorkbook(wb) {
     let emailTemplate1 = '';
     let emailTemplate2 = '';
     let emailTemplate3 = '';
+    let adobeCcAdGroup = '';
 
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
@@ -107,6 +109,22 @@ function parseWorkbook(wb) {
         const t3Ref = XLS.utils.encode_cell({ r: 13, c: 11 });
         const t3Cell = masterSheet[t3Ref];
         if (t3Cell && t3Cell.v) emailTemplate3 = String(t3Cell.v).trim();
+
+        const adobeRef = XLS.utils.encode_cell({ r: 4, c: 1 });
+        const adobeCell = masterSheet[adobeRef];
+        if (adobeCell && adobeCell.f) {
+            const formula = adobeCell.f;
+            const matches = formula.match(/"([^"]*)"/g);
+            if (matches) {
+                for (const match of matches) {
+                    const value = match.replace(/"/g, '');
+                    if (value && value !== 'Marketing') {
+                        adobeCcAdGroup = value;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     workbookData = {
@@ -123,7 +141,8 @@ function parseWorkbook(wb) {
         cmicPassword: cmicPassword,
         emailTemplate1: emailTemplate1,
         emailTemplate2: emailTemplate2,
-        emailTemplate3: emailTemplate3
+        emailTemplate3: emailTemplate3,
+        adobeCcAdGroup: adobeCcAdGroup
     };
     
     const dataToStore = {
@@ -155,7 +174,8 @@ function loadFromStorage() {
                 cmicPassword: data.cmicPassword || '',
                 emailTemplate1: data.emailTemplate1 || '',
                 emailTemplate2: data.emailTemplate2 || '',
-                emailTemplate3: data.emailTemplate3 || ''
+                emailTemplate3: data.emailTemplate3 || '',
+                adobeCcAdGroup: data.adobeCcAdGroup || ''
             };
             return true;
         } catch (e) {
@@ -428,6 +448,14 @@ function updateLookups() {
     
     const areaCodes = selectedLocation ? vLookup(selectedLocation, workbookData.adPerLocation, 0, 3) : '';
     document.getElementById('areaCodes').textContent = areaCodes || (selectedLocation ? 'No matching role/location' : 'Select Location above');
+
+    const adobeBanner = document.getElementById('adobeBanner');
+    if (selectedJobTitle === 'Marketing' && workbookData.adobeCcAdGroup) {
+        document.getElementById('adobeCcAdGroup').textContent = workbookData.adobeCcAdGroup;
+        adobeBanner.classList.add('show');
+    } else {
+        adobeBanner.classList.remove('show');
+    }
 }
 
 function findValueInSheet(sheetData, searchValue) {
@@ -1909,7 +1937,8 @@ clearAllStorageBtn.addEventListener('click', () => {
             cmicPassword: '',
             emailTemplate1: '',
             emailTemplate2: '',
-            emailTemplate3: ''
+            emailTemplate3: '',
+            adobeCcAdGroup: ''
         };
         document.getElementById('jobTypeSelect').innerHTML = '';
         document.getElementById('jobTitleSelect').innerHTML = '';
