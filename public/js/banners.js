@@ -130,6 +130,12 @@ export function buildPreParseNotes(ticketText) {
 export function buildPostParseNotes(data, ticketText) {
     const notes = [];
     const textLower = ticketText.toLowerCase();
+
+    const resolvedLocation = findBestLocationMatch(data.location, data.empTypeForLookup, textLower, data.cmicCode);
+    const btPattern = new RegExp('bt..h');
+    if (resolvedLocation && btPattern.test(resolvedLocation.toLowerCase())) {
+        notes.push(`This ticket appears to be for ${resolvedLocation}.`);
+    }
     const isIntern = /intern/i.test(data.jobTitle);
     const hasKeyboard = textLower.includes('keyboard');
     const hasMouse = textLower.includes('mouse');
