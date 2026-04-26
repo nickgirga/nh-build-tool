@@ -33,7 +33,8 @@ export function buildPreParseNotes(ticketText) {
     if (MIRROR_PATTERN.test(ticketText)) {
         notes.push('This ticket appears to request a mirror.');
     }
-    if (/Non-Standard Computer/i.test(ticketText)) {
+    const hasNonStandardComputer = /Non-Standard Computer/i.test(ticketText);
+    if (hasNonStandardComputer) {
         notes.push('This ticket appears to request a non-standard computer.');
     }
     if (/DO NOT add New Hire to.*Mailing Distribution List/i.test(ticketText)) {
@@ -103,6 +104,23 @@ export function buildPreParseNotes(ticketText) {
     const hasUniqueEmailDomain = (parsedEmailDomain && !normalDomainPattern.test(parsedEmailDomain.toLowerCase())) || uniqueDomainPattern.test(textLower);
     if (hasUniqueEmailDomain) {
         notes.push('This ticket appears to request a unique email domain.');
+    }
+
+    if (!hasNonStandardComputer) {
+        let computerRequested = false;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim().toLowerCase();
+            const nextLine = lines[i + 1] ? lines[i + 1].trim().toLowerCase() : '';
+            if (line === 'computer') {
+                if (nextLine === 'yes') {
+                    computerRequested = true;
+                }
+                break;
+            }
+        }
+        if (!computerRequested) {
+            notes.push('This ticket appears to not request a computer.');
+        }
     }
 
     return notes;
