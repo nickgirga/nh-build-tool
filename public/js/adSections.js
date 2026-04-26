@@ -44,17 +44,21 @@ export function formatCmicCode(codeStr) {
 export function updateAdSections(data) {
     const adFormatted = formatAdDivision(data.division);
     adDivisionEl.textContent = adFormatted;
-    setTimeout(() => {
-        adSection.style.display = 'flex';
-    }, 100);
-    adSection.style.animationDelay = '0.1s';
+    if (adFormatted) {
+        setTimeout(() => {
+            adSection.style.display = 'flex';
+        }, 100);
+        adSection.style.animationDelay = '0.1s';
+    }
     
     const cmicFormatted = formatCmicCode(data.cmicCode);
     cmicCodeEl.textContent = cmicFormatted;
-    setTimeout(() => {
-        cmicSection.style.display = 'flex';
-    }, 200);
-    cmicSection.style.animationDelay = '0.2s';
+    if (cmicFormatted) {
+        setTimeout(() => {
+            cmicSection.style.display = 'flex';
+        }, 200);
+        cmicSection.style.animationDelay = '0.2s';
+    }
     
     supervisorDisplayEl.textContent = data.supervisor || '';
     currentSupervisor = data.supervisor || '';
@@ -62,10 +66,12 @@ export function updateAdSections(data) {
     const hasSupervisorId = /\(\d+\)/.test(currentSupervisor);
     copySupervisorIdBtn.style.display = hasSupervisorId ? 'flex' : 'none';
     
-    setTimeout(() => {
-        supervisorSection.style.display = 'flex';
-    }, 300);
-    supervisorSection.style.animationDelay = '0.3s';
+    if (currentSupervisor) {
+        setTimeout(() => {
+            supervisorSection.style.display = 'flex';
+        }, 300);
+        supervisorSection.style.animationDelay = '0.3s';
+    }
 }
 
 // Copy handler for AD Department.
