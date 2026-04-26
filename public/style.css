@@ -295,6 +295,20 @@ select:hover {
     white-space: pre;
     overflow-x: auto;
     max-width: 100%;
+    scrollbar-color: var(--border) var(--surface-light);
+}
+
+#emailCommandSetupScript::-webkit-scrollbar-track {
+    background: var(--surface-light);
+}
+
+#emailCommandSetupScript::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+#emailCommandSetupScript::-webkit-scrollbar-thumb:hover {
+    background: var(--subtext);
 }
 
 .results-section {
