@@ -504,6 +504,24 @@ select:hover {
     animation: fadeSlideIn 0.4s ease forwards;
 }
 
+.agent-name-banner {
+    display: none;
+    width: 100%;
+    padding: 12px;
+    background-color: #3d2832;
+    border: 2px solid #f38ba8;
+    border-radius: 8px;
+    color: #f38ba8;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.agent-name-banner.show {
+    display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
 .notes-log {
     display: none;
     width: 100%;
@@ -659,6 +677,14 @@ input[type="text"] {
 input[type="text"]:focus {
     outline: none;
     border-color: var(--primary);
+}
+
+input[type="text"].agent-name-error {
+    border-color: #f38ba8;
+}
+
+input[type="text"].agent-name-error:focus {
+    border-color: #f38ba8;
 }
 
 input[type="text"]::placeholder {

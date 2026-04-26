@@ -144,6 +144,15 @@ document.getElementById('copyAllAdRolesBtn').addEventListener('click', () => {
 generateBtn.addEventListener('click', async () => {
     showInfoBanner();
 
+    const agentNameBanner = document.getElementById('agentNameBanner');
+    if (!agentNameInput.value.trim()) {
+        agentNameBanner.classList.add('show');
+        agentNameInput.classList.add('agent-name-error');
+    } else {
+        agentNameBanner.classList.remove('show');
+        agentNameInput.classList.remove('agent-name-error');
+    }
+
     let notes = buildPreParseNotes(ticketDataInput.value);
     renderNotes(notes);
 
@@ -308,6 +317,9 @@ if (savedAgentName) {
 
 agentNameInput.addEventListener('input', () => {
     localStorage.setItem(AGENT_NAME_KEY, agentNameInput.value);
+    if (agentNameInput.value.trim()) {
+        agentNameInput.classList.remove('agent-name-error');
+    }
 });
 
 // --- Clear All Storage ---

@@ -16,6 +16,7 @@ export function clearBanners() {
     document.getElementById('warningLog').classList.remove('has-warnings');
     document.getElementById('slaWarningLog').classList.remove('has-sla-warning');
     document.getElementById('infoLog').classList.remove('show');
+    document.getElementById('agentNameBanner').classList.remove('show');
     document.getElementById('notesLogId').classList.remove('show');
     document.getElementById('lookupWarning').classList.remove('show');
 }
