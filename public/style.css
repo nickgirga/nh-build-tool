@@ -1106,7 +1106,7 @@ button {
     border-collapse: collapse;
     border: 1px solid var(--border);
     width: auto;
-    margin: 12px auto 0;
+    margin: 12px auto 24px;
 }
 
 .users-table tr {
