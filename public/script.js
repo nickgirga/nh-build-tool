@@ -1251,6 +1251,15 @@ function updateOutput(data) {
             }
         };
     });
+
+    Object.values(reportingCells).forEach(cell => {
+        cell.onclick = async () => {
+            if (cell.textContent) {
+                await navigator.clipboard.writeText(cell.textContent);
+                showToast();
+            }
+        };
+    });
 }
 
 function getRowString() {
