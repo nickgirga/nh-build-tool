@@ -132,6 +132,20 @@ export function findBestLocationMatch(parsedLocation, empTypeForLookup, textLowe
         return 'Craft';
     }
 
+    const btPattern = new RegExp('bt..h');
+    if (textLower) {
+        const attachmentsIndex = textLower.indexOf('\nattachments ');
+        const textBeforeAttachments = attachmentsIndex !== -1 ? textLower.slice(0, attachmentsIndex) : textLower;
+        if (btPattern.test(textBeforeAttachments)) {
+            for (const row of workbookData.adPerLocation) {
+                const excelLocation = row[0];
+                if (excelLocation && btPattern.test(excelLocation.toLowerCase())) {
+                    return excelLocation;
+                }
+            }
+        }
+    }
+
     const tbPattern = new RegExp('t.......b');
     if (cmicCode && tbPattern.test(cmicCode.toLowerCase())) {
         for (const row of workbookData.adPerLocation) {
