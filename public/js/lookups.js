@@ -1,5 +1,10 @@
 import { workbookData } from './workbook.js';
 
+// Removes non-alphanumeric characters from a string (keeps letters, numbers, and whitespace).
+function stripSymbols(str) {
+    return str.replace(/[^\w\s]/g, '');
+}
+
 // Simple vertical lookup: finds the first row where keyColIndex matches lookupValue (case-insensitive) and returns returnColIndex.
 export function vLookup(lookupValue, sheetData, keyColIndex, returnColIndex) {
     for (const row of sheetData) {
@@ -40,41 +45,55 @@ export function findCmicGroupForLocation(location) {
 // Attempts to match a parsed job title against the workbook's canonical job titles using word overlap.
 export function findBestJobTitleMatch(parsedJobTitle) {
     if (!parsedJobTitle || !workbookData.jobTitles.length) return parsedJobTitle;
-    
+
     const lowerTitle = parsedJobTitle.toLowerCase();
     const parsedWords = lowerTitle.split(/\s+/);
-    
+
     let bestMatch = null;
     let bestMatchWordCount = 0;
-    
+
     for (const row of workbookData.jobTitles) {
         const excelTitle = row[0];
         if (!excelTitle) continue;
-        
-        const excelWords = excelTitle.toLowerCase().split(/\s+/);
-        let matchingWords = 0;
-        
-        for (const excelWord of excelWords) {
-            if (parsedWords.includes(excelWord)) {
-                matchingWords++;
+
+        const candidates = [
+            excelTitle.toLowerCase(),
+            stripSymbols(excelTitle).toLowerCase()
+        ];
+
+        for (const candidate of candidates) {
+            const excelWords = candidate.split(/\s+/);
+            let matchingWords = 0;
+
+            for (const excelWord of excelWords) {
+                if (parsedWords.includes(excelWord)) {
+                    matchingWords++;
+                }
+            }
+
+            if (matchingWords === excelWords.length && excelWords.length > bestMatchWordCount) {
+                bestMatch = excelTitle;
+                bestMatchWordCount = excelWords.length;
             }
         }
-        
-        if (matchingWords === excelWords.length && excelWords.length > bestMatchWordCount) {
-            bestMatch = excelTitle;
-            bestMatchWordCount = excelWords.length;
-        }
     }
-    
+
     if (bestMatch) return bestMatch;
-    
+
     for (const row of workbookData.jobTitles) {
         const excelTitle = row[0];
-        if (excelTitle && lowerTitle.includes(excelTitle.toLowerCase())) {
+        if (!excelTitle) continue;
+
+        if (lowerTitle.includes(excelTitle.toLowerCase())) {
+            return excelTitle;
+        }
+
+        const stripped = stripSymbols(excelTitle).toLowerCase();
+        if (stripped && lowerTitle.includes(stripped)) {
             return excelTitle;
         }
     }
-    
+
     return parsedJobTitle;
 }
 
