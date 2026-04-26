@@ -19,7 +19,10 @@ let workbookData = {
     jobSoftwares: [],
     cmic: [],
     cmicLocationMap: [],
-    emailDomains: []
+    emailDomains: [],
+    emailCommandSetupScript: [],
+    logonScript: '',
+    cmicPassword: ''
 };
 
 function parseSheetToArrays(worksheet, headerRow = 1) {
@@ -59,6 +62,10 @@ function parseWorkbook(wb) {
     };
     
     const emailDomains = [];
+    const emailCommandSetupScript = [];
+    let logonScript = '';
+    let cmicPassword = '';
+
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
         for (let row = 7; row <= 11; row++) {
@@ -67,6 +74,23 @@ function parseWorkbook(wb) {
             if (cell && cell.v) {
                 emailDomains.push(String(cell.v).trim());
             }
+        }
+        for (let row = 6; row <= 8; row++) {
+            const cellRef = XLS.utils.encode_cell({ r: row, c: 0 });
+            const cell = masterSheet[cellRef];
+            if (cell && cell.v) {
+                emailCommandSetupScript.push(String(cell.v).trim());
+            }
+        }
+        const logonRef = XLS.utils.encode_cell({ r: 4, c: 0 });
+        const logonCell = masterSheet[logonRef];
+        if (logonCell && logonCell.v) {
+            logonScript = String(logonCell.v).trim();
+        }
+        const cmicPwRef = XLS.utils.encode_cell({ r: 4, c: 3 });
+        const cmicPwCell = masterSheet[cmicPwRef];
+        if (cmicPwCell && cmicPwCell.v) {
+            cmicPassword = String(cmicPwCell.v).trim();
         }
     }
 
@@ -78,7 +102,10 @@ function parseWorkbook(wb) {
         jobSoftwares: sheets['Job Softwares'] || [],
         cmic: sheets['CMiC'] || [],
         cmicLocationMap: sheets['CMiC Location Map'] || [],
-        emailDomains: emailDomains
+        emailDomains: emailDomains,
+        emailCommandSetupScript: emailCommandSetupScript,
+        logonScript: logonScript,
+        cmicPassword: cmicPassword
     };
     
     const dataToStore = {
@@ -104,7 +131,10 @@ function loadFromStorage() {
                 jobSoftwares: data.jobSoftwares || [],
                 cmic: data.cmic || [],
                 cmicLocationMap: data.cmicLocationMap || [],
-                emailDomains: data.emailDomains || []
+                emailDomains: data.emailDomains || [],
+                emailCommandSetupScript: data.emailCommandSetupScript || [],
+                logonScript: data.logonScript || '',
+                cmicPassword: data.cmicPassword || ''
             };
             return true;
         } catch (e) {
@@ -113,6 +143,19 @@ function loadFromStorage() {
         }
     }
     return false;
+}
+
+function populateClipboardUtilities() {
+    const emailCommandEl = document.getElementById('emailCommandSetupScript');
+    const logonScriptEl = document.getElementById('logonScript');
+    const cmicPasswordEl = document.getElementById('cmicPassword');
+
+    emailCommandEl.textContent = workbookData.emailCommandSetupScript.join('\n');
+    logonScriptEl.textContent = workbookData.logonScript;
+    cmicPasswordEl.textContent = workbookData.cmicPassword;
+
+    const hasData = workbookData.emailCommandSetupScript.length > 0 || workbookData.logonScript || workbookData.cmicPassword;
+    document.getElementById('clipboardSection').style.display = hasData ? 'flex' : 'none';
 }
 
 function populateDropdowns() {
@@ -399,6 +442,7 @@ excelFileInput.addEventListener('change', async (e) => {
             const workbook = XLS.read(data, { type: 'array' });
             parseWorkbook(workbook);
             populateDropdowns();
+            populateClipboardUtilities();
             updateFileStatus(true);
         } catch (error) {
             console.error('Error parsing Excel file:', error);
@@ -500,6 +544,21 @@ document.getElementById('copyO365GroupsBtn').addEventListener('click', async () 
 
 document.getElementById('copyAreaCodesBtn').addEventListener('click', async () => {
     await navigator.clipboard.writeText(document.getElementById('areaCodes').textContent);
+    showToast();
+});
+
+document.getElementById('copyEmailCommandSetupScriptBtn').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(document.getElementById('emailCommandSetupScript').textContent);
+    showToast();
+});
+
+document.getElementById('copyLogonScriptBtn').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(document.getElementById('logonScript').textContent);
+    showToast();
+});
+
+document.getElementById('copyCmicPasswordBtn').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(document.getElementById('cmicPassword').textContent);
     showToast();
 });
 
@@ -1729,6 +1788,7 @@ clearBtn.addEventListener('click', () => {
 
 if (loadFromStorage()) {
     populateDropdowns();
+    populateClipboardUtilities();
     updateFileStatus(true);
 }
 
@@ -1758,7 +1818,10 @@ clearAllStorageBtn.addEventListener('click', () => {
             jobSoftwares: [],
             cmic: [],
             cmicLocationMap: [],
-            emailDomains: []
+            emailDomains: [],
+            emailCommandSetupScript: [],
+            logonScript: '',
+            cmicPassword: ''
         };
         document.getElementById('jobTypeSelect').innerHTML = '';
         document.getElementById('jobTitleSelect').innerHTML = '';
@@ -1773,6 +1836,10 @@ clearAllStorageBtn.addEventListener('click', () => {
         document.getElementById('cmicUserAccess').textContent = '';
         document.getElementById('o365Groups').textContent = '';
         document.getElementById('areaCodes').textContent = '';
+        document.getElementById('emailCommandSetupScript').textContent = '';
+        document.getElementById('logonScript').textContent = '';
+        document.getElementById('cmicPassword').textContent = '';
+        document.getElementById('clipboardSection').style.display = 'none';
         excelFileInput.value = '';
         agentNameInput.value = '';
         clearUsersTable();

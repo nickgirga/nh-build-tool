@@ -245,6 +245,58 @@ select:hover {
     font-size: 14px;
 }
 
+.clipboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background-color: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
+.clipboard-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clipboard-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background-color: var(--surface-light);
+    border-radius: 6px;
+    position: relative;
+}
+
+.clipboard-group h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--subtext);
+    margin: 0;
+    padding-right: 40px;
+}
+
+.clipboard-value {
+    font-size: 14px;
+    font-family: monospace;
+    color: var(--text);
+    word-break: break-word;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+#emailCommandSetupScript {
+    white-space: pre;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
 .results-section {
     display: flex;
     flex-direction: column;
