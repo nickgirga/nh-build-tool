@@ -515,67 +515,63 @@ function updateUsersTableCmic() {
     }
 }
 
-document.getElementById('copyAdRolesPerTypeBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('adRolesPerType').textContent);
-    showToast();
+async function copyToClipboard(btnId, text) {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById(btnId);
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 1500);
+}
+
+document.getElementById('copyAdRolesPerTypeBtn').addEventListener('click', () => {
+    copyToClipboard('copyAdRolesPerTypeBtn', document.getElementById('adRolesPerType').textContent);
 });
 
-document.getElementById('copyAdRolesPerJobTitleBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('adRolesPerJobTitle').textContent);
-    showToast();
+document.getElementById('copyAdRolesPerJobTitleBtn').addEventListener('click', () => {
+    copyToClipboard('copyAdRolesPerJobTitleBtn', document.getElementById('adRolesPerJobTitle').textContent);
 });
 
-document.getElementById('copyAdRolesPerLocationBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('adRolesPerLocation').textContent);
-    showToast();
+document.getElementById('copyAdRolesPerLocationBtn').addEventListener('click', () => {
+    copyToClipboard('copyAdRolesPerLocationBtn', document.getElementById('adRolesPerLocation').textContent);
 });
 
-document.getElementById('copyCmicUserSettingsBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('cmicUserSettings').textContent);
-    showToast();
+document.getElementById('copyCmicUserSettingsBtn').addEventListener('click', () => {
+    copyToClipboard('copyCmicUserSettingsBtn', document.getElementById('cmicUserSettings').textContent);
 });
 
-document.getElementById('copyCmicUserAccessBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('cmicUserAccess').textContent);
-    showToast();
+document.getElementById('copyCmicUserAccessBtn').addEventListener('click', () => {
+    copyToClipboard('copyCmicUserAccessBtn', document.getElementById('cmicUserAccess').textContent);
 });
 
-document.getElementById('copyO365GroupsBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('o365Groups').textContent);
-    showToast();
+document.getElementById('copyO365GroupsBtn').addEventListener('click', () => {
+    copyToClipboard('copyO365GroupsBtn', document.getElementById('o365Groups').textContent);
 });
 
-document.getElementById('copyAreaCodesBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('areaCodes').textContent);
-    showToast();
+document.getElementById('copyAreaCodesBtn').addEventListener('click', () => {
+    copyToClipboard('copyAreaCodesBtn', document.getElementById('areaCodes').textContent);
 });
 
-document.getElementById('copyEmailCommandSetupScriptBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('emailCommandSetupScript').textContent);
-    showToast();
+document.getElementById('copyEmailCommandSetupScriptBtn').addEventListener('click', () => {
+    copyToClipboard('copyEmailCommandSetupScriptBtn', document.getElementById('emailCommandSetupScript').textContent);
 });
 
-document.getElementById('copyLogonScriptBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('logonScript').textContent);
-    showToast();
+document.getElementById('copyLogonScriptBtn').addEventListener('click', () => {
+    copyToClipboard('copyLogonScriptBtn', document.getElementById('logonScript').textContent);
 });
 
-document.getElementById('copyCmicPasswordBtn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(document.getElementById('cmicPassword').textContent);
-    showToast();
+document.getElementById('copyCmicPasswordBtn').addEventListener('click', () => {
+    copyToClipboard('copyCmicPasswordBtn', document.getElementById('cmicPassword').textContent);
 });
 
-document.getElementById('copyAllAdRolesBtn').addEventListener('click', async () => {
+document.getElementById('copyAllAdRolesBtn').addEventListener('click', () => {
     const adRolesPerType = document.getElementById('adRolesPerType').textContent;
     const adRolesPerJobTitle = document.getElementById('adRolesPerJobTitle').textContent;
     const adRolesPerLocation = document.getElementById('adRolesPerLocation').textContent;
-    
+
     const allRoles = [adRolesPerType, adRolesPerJobTitle, adRolesPerLocation]
         .filter(r => r && !r.includes('Select') && r.includes(';'))
         .join(' ');
-    
-    await navigator.clipboard.writeText(allRoles);
-    showToast();
+
+    copyToClipboard('copyAllAdRolesBtn', allRoles);
 });
 
 const ticketDataInput = document.getElementById('ticketData');
