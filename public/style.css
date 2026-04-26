@@ -1009,6 +1009,17 @@ button {
     right: 20px;
 }
 
+.copy-email-cmd-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.copy-email-cmd-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .users-section .section-header {
     display: flex;
     justify-content: space-between;

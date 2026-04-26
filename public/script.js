@@ -22,7 +22,10 @@ let workbookData = {
     emailDomains: [],
     emailCommandSetupScript: [],
     logonScript: '',
-    cmicPassword: ''
+    cmicPassword: '',
+    emailTemplate1: '',
+    emailTemplate2: '',
+    emailTemplate3: ''
 };
 
 function parseSheetToArrays(worksheet, headerRow = 1) {
@@ -65,6 +68,9 @@ function parseWorkbook(wb) {
     const emailCommandSetupScript = [];
     let logonScript = '';
     let cmicPassword = '';
+    let emailTemplate1 = '';
+    let emailTemplate2 = '';
+    let emailTemplate3 = '';
 
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
@@ -92,6 +98,15 @@ function parseWorkbook(wb) {
         if (cmicPwCell && cmicPwCell.v) {
             cmicPassword = String(cmicPwCell.v).trim();
         }
+        const t1Ref = XLS.utils.encode_cell({ r: 13, c: 9 });
+        const t1Cell = masterSheet[t1Ref];
+        if (t1Cell && t1Cell.v) emailTemplate1 = String(t1Cell.v).trim();
+        const t2Ref = XLS.utils.encode_cell({ r: 13, c: 10 });
+        const t2Cell = masterSheet[t2Ref];
+        if (t2Cell && t2Cell.v) emailTemplate2 = String(t2Cell.v).trim();
+        const t3Ref = XLS.utils.encode_cell({ r: 13, c: 11 });
+        const t3Cell = masterSheet[t3Ref];
+        if (t3Cell && t3Cell.v) emailTemplate3 = String(t3Cell.v).trim();
     }
 
     workbookData = {
@@ -105,7 +120,10 @@ function parseWorkbook(wb) {
         emailDomains: emailDomains,
         emailCommandSetupScript: emailCommandSetupScript,
         logonScript: logonScript,
-        cmicPassword: cmicPassword
+        cmicPassword: cmicPassword,
+        emailTemplate1: emailTemplate1,
+        emailTemplate2: emailTemplate2,
+        emailTemplate3: emailTemplate3
     };
     
     const dataToStore = {
@@ -134,7 +152,10 @@ function loadFromStorage() {
                 emailDomains: data.emailDomains || [],
                 emailCommandSetupScript: data.emailCommandSetupScript || [],
                 logonScript: data.logonScript || '',
-                cmicPassword: data.cmicPassword || ''
+                cmicPassword: data.cmicPassword || '',
+                emailTemplate1: data.emailTemplate1 || '',
+                emailTemplate2: data.emailTemplate2 || '',
+                emailTemplate3: data.emailTemplate3 || ''
             };
             return true;
         } catch (e) {
@@ -670,6 +691,7 @@ function initUsersEditableCells() {
                 }
             }
             saveUsersTable();
+            updateCopyEmailCmdBtnState();
         });
         cell.addEventListener('keydown', (e) => {
             if (e.key === 'Tab') {
@@ -699,6 +721,32 @@ function initUsersLabelCells() {
             }
         });
     });
+}
+
+function updateCopyEmailCmdBtnState() {
+    const btn = document.getElementById('copyEmailCmdBtn');
+    const hasUsername = usersCells.username.textContent.trim().length > 0;
+    const emailDomainSelect = document.getElementById('emailDomainSelect');
+    let hasDomain = false;
+    if (emailDomainSelect.value === '__other__') {
+        hasDomain = document.getElementById('emailDomainOther').value.trim().length > 0;
+    } else {
+        hasDomain = emailDomainSelect.value.length > 0;
+    }
+
+    if (hasUsername && hasDomain) {
+        btn.disabled = false;
+        btn.removeAttribute('title');
+    } else if (!hasUsername && !hasDomain) {
+        btn.disabled = true;
+        btn.title = 'Fill the Username Field and Choose an Email Domain';
+    } else if (!hasDomain) {
+        btn.disabled = true;
+        btn.title = 'Choose an Email Domain';
+    } else {
+        btn.disabled = true;
+        btn.title = 'Fill the Username Field';
+    }
 }
 
 function showEmailDomainOther() {
@@ -736,6 +784,7 @@ function loadUsersTable() {
             console.error('Failed to load users table:', e);
         }
     }
+    updateCopyEmailCmdBtnState();
 }
 
 function clearUsersTable() {
@@ -743,6 +792,7 @@ function clearUsersTable() {
         cell.textContent = '';
     });
     localStorage.removeItem(USERS_TABLE_KEY);
+    updateCopyEmailCmdBtnState();
 }
 
 const WORD_LIST_URL = 'https://cdn.jsdelivr.net/gh/bitcoin/bips@master/bip-0039/english.txt';
@@ -1585,7 +1635,8 @@ generateBtn.addEventListener('click', async () => {
                 document.getElementById('emailDomainOther').value = data.emailDomain;
             }
         }
-        
+        updateCopyEmailCmdBtnState();
+
         updateLookups();
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
@@ -1758,6 +1809,27 @@ document.getElementById('clearUsersBtn').addEventListener('click', () => {
 
 document.getElementById('generatePasswordBtn').addEventListener('click', () => generateUsersPassword());
 
+document.getElementById('copyEmailCmdBtn').addEventListener('click', () => {
+    const username = usersCells.username.textContent.trim();
+    if (!username) return;
+
+    const emailDomainSelect = document.getElementById('emailDomainSelect');
+    let emailDomain = '';
+    if (emailDomainSelect.value === '__other__') {
+        emailDomain = document.getElementById('emailDomainOther').value.trim();
+    } else {
+        emailDomain = emailDomainSelect.value;
+    }
+
+    const emailAddress = username + '@' + emailDomain;
+    usersCells.email.textContent = emailAddress;
+    saveUsersTable();
+
+    const command = workbookData.emailTemplate1 + username + '@' + emailDomain + workbookData.emailTemplate2 + username + workbookData.emailTemplate3;
+    navigator.clipboard.writeText(command);
+    copyToClipboard('copyEmailCmdBtn', command);
+});
+
 document.getElementById('emailDomainSelect').addEventListener('change', () => {
     const emailDomainSelect = document.getElementById('emailDomainSelect');
     const emailDomainOther = document.getElementById('emailDomainOther');
@@ -1767,6 +1839,11 @@ document.getElementById('emailDomainSelect').addEventListener('change', () => {
         hideEmailDomainOther();
         emailDomainOther.value = '';
     }
+    updateCopyEmailCmdBtnState();
+});
+
+document.getElementById('emailDomainOther').addEventListener('input', () => {
+    updateCopyEmailCmdBtnState();
 });
 
 document.getElementById('mirrorCheckbox').addEventListener('change', () => {
@@ -1829,7 +1906,10 @@ clearAllStorageBtn.addEventListener('click', () => {
             emailDomains: [],
             emailCommandSetupScript: [],
             logonScript: '',
-            cmicPassword: ''
+            cmicPassword: '',
+            emailTemplate1: '',
+            emailTemplate2: '',
+            emailTemplate3: ''
         };
         document.getElementById('jobTypeSelect').innerHTML = '';
         document.getElementById('jobTitleSelect').innerHTML = '';
