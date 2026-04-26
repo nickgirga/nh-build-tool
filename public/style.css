@@ -1160,6 +1160,59 @@ button {
     }
 }
 
+@media (max-width: 600px) {
+    .users-section {
+        padding: 16px 12px 56px;
+    }
+
+    .users-table .editable-cell {
+        min-width: 160px;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .users-table .label-cell {
+        font-size: 13px;
+        width: auto;
+    }
+
+    .users-table td {
+        padding: 8px 10px;
+    }
+
+    .users-section .copy-btn.with-text,
+    .supervisor-buttons .copy-btn.with-text,
+    .results-section .section-header .copy-btn.with-text {
+        padding: 6px 10px;
+        font-size: 13px;
+        gap: 4px;
+    }
+
+    .users-section .copy-btn.with-text .material-symbols-outlined,
+    .supervisor-buttons .copy-btn.with-text .material-symbols-outlined,
+    .results-section .section-header .copy-btn.with-text .material-symbols-outlined {
+        font-size: 16px;
+    }
+
+    .users-buttons {
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .generate-password-btn,
+    .copy-email-cmd-btn {
+        bottom: 12px;
+    }
+
+    .generate-password-btn {
+        right: 12px;
+    }
+
+    .copy-email-cmd-btn {
+        left: 12px;
+    }
+}
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
