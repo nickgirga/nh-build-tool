@@ -349,6 +349,8 @@ if (loadFromStorage()) {
     populateClipboardUtilities();
     updateFileStatus(true);
     updateLookups();
+} else {
+    updateFileStatus(false);
 }
 
 loadUsersTable();

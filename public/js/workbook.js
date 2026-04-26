@@ -270,6 +270,7 @@ export function updateFileStatus(loaded) {
     const fileStatus = document.getElementById('fileStatus');
     const lookupSection = document.getElementById('lookupSection');
     const resultsSection = document.getElementById('resultsSection');
+    const workbookWarning = document.getElementById('workbookWarning');
 
     if (loaded && workbookData.adPerType.length > 0) {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -291,11 +292,13 @@ export function updateFileStatus(loaded) {
         fileStatus.classList.add('show');
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
+        if (workbookWarning) workbookWarning.classList.remove('show');
     } else {
         fileStatus.textContent = '';
         fileStatus.classList.remove('loaded');
         fileStatus.classList.remove('show');
         lookupSection.style.display = 'none';
         resultsSection.style.display = 'none';
+        if (workbookWarning) workbookWarning.classList.add('show');
     }
 }

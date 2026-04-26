@@ -522,6 +522,24 @@ select:hover {
     animation: fadeSlideIn 0.4s ease forwards;
 }
 
+.workbook-warning {
+    display: none;
+    width: 100%;
+    padding: 12px;
+    background-color: #3d3521;
+    border: 2px solid #f9e05f;
+    border-radius: 8px;
+    color: #f9e05f;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.workbook-warning.show {
+    display: block;
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
 .adobe-banner {
     display: none;
     width: 100%;
