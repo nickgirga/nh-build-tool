@@ -193,10 +193,10 @@ generateBtn.addEventListener('click', async () => {
             selectDropdownValue('jobTypeSelect', data.empTypeForLookup);
         }
         if (data.jobTitle) {
-            selectDropdownValue('jobTitleSelect', findBestJobTitleMatch(data.jobTitle));
+            selectDropdownValue('jobTitleSelect', findBestJobTitleMatch(data.jobTitle, data.cmicCode));
         }
         if (data.location) {
-            selectDropdownValue('locationSelect', findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase()));
+            selectDropdownValue('locationSelect', findBestLocationMatch(data.location, data.empTypeForLookup, ticketDataInput.value.toLowerCase(), data.cmicCode));
         }
         if (data.emailDomain) {
             const emailDomainClean = data.emailDomain.toLowerCase();

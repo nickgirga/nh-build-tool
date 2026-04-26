@@ -43,11 +43,21 @@ export function findCmicGroupForLocation(location) {
 }
 
 // Attempts to match a parsed job title against the workbook's canonical job titles using word overlap.
-export function findBestJobTitleMatch(parsedJobTitle) {
+export function findBestJobTitleMatch(parsedJobTitle, cmicCode) {
     if (!parsedJobTitle || !workbookData.jobTitles.length) return parsedJobTitle;
 
     const lowerTitle = parsedJobTitle.toLowerCase();
     const parsedWords = lowerTitle.split(/\s+/);
+
+    const tbPattern = new RegExp('t.......b');
+    let tbMatch = '';
+    if (cmicCode && tbPattern.test(cmicCode.toLowerCase())) {
+        const m = cmicCode.toLowerCase().match(tbPattern);
+        if (m) {
+            tbMatch = m[0];
+            parsedWords.push(tbMatch);
+        }
+    }
 
     let bestMatch = null;
     let bestMatchWordCount = 0;
@@ -92,6 +102,10 @@ export function findBestJobTitleMatch(parsedJobTitle) {
         if (stripped && lowerTitle.includes(stripped)) {
             return excelTitle;
         }
+
+        if (tbMatch && excelTitle.toLowerCase().includes(tbMatch)) {
+            return excelTitle;
+        }
     }
 
     return parsedJobTitle;
@@ -113,11 +127,21 @@ export function checkForUniqueEmail(parsedDomain, textLower) {
 }
 
 // Attempts to match a parsed location against the workbook's canonical locations with special-case overrides.
-export function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower) {
+export function findBestLocationMatch(parsedLocation, empTypeForLookup, textLower, cmicCode) {
     if (empTypeForLookup === 'Craft') {
         return 'Craft';
     }
-    
+
+    const tbPattern = new RegExp('t.......b');
+    if (cmicCode && tbPattern.test(cmicCode.toLowerCase())) {
+        for (const row of workbookData.adPerLocation) {
+            const excelLocation = row[0];
+            if (excelLocation && tbPattern.test(excelLocation.toLowerCase())) {
+                return excelLocation;
+            }
+        }
+    }
+
     const uniqueLocation = new RegExp('s.......n e....y');
     const uniqueLocation2 = new RegExp('s.k c..........n');
     const uniqueLocation3 = new RegExp('s.k b......s');

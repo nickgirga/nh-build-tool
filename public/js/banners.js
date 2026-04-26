@@ -217,7 +217,7 @@ export function buildErrors(data, ticketText) {
             errors.push("Job Title (For Lookup)");
         }
 
-        const locationMatched = workbookData.adPerLocation.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketText.toLowerCase()) || '').toLowerCase());
+        const locationMatched = workbookData.adPerLocation.some(row => row[0] && row[0].toLowerCase() === (findBestLocationMatch(data.location, data.empTypeForLookup, ticketText.toLowerCase(), data.cmicCode) || '').toLowerCase());
         if (data.location && !locationMatched) {
             errors.push("Location (For Lookup)");
         }
