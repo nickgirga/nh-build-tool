@@ -151,6 +151,23 @@ export function buildPostParseNotes(data, ticketText) {
         notes.push('This ticket appears to have requested peripherals, despite being for an intern.');
     }
 
+    if (!isIntern) {
+        let dockRequested = false;
+        for (let i = 0; i < ticketLines.length; i++) {
+            const line = ticketLines[i].trim().toLowerCase();
+            const nextLine = ticketLines[i + 1] ? ticketLines[i + 1].trim().toLowerCase() : '';
+            if (line === 'dock') {
+                if (nextLine === 'yes') {
+                    dockRequested = true;
+                }
+                break;
+            }
+        }
+        if (!dockRequested) {
+            notes.push('This ticket appears to not request a dock.');
+        }
+    }
+
     return notes;
 }
 
