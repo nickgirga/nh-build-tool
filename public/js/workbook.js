@@ -104,7 +104,7 @@ export function parseWorkbook(wb) {
         if (logonCell && logonCell.v) {
             logonScript = String(logonCell.v).trim();
         }
-        const cmicPwRef = XLS.utils.encode_cell({ r: 4, c: 3 });
+        const cmicPwRef = XLS.utils.encode_cell({ r: 4, c: 4 });
         const cmicPwCell = masterSheet[cmicPwRef];
         if (cmicPwCell && cmicPwCell.v) {
             cmicPassword = String(cmicPwCell.v).trim();
