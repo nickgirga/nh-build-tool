@@ -1,4 +1,4 @@
-import { XLS, STORAGE_KEY } from './constants.js';
+import { XLS, STORAGE_KEY, EXPECTED_MAJOR_VERSION, EXPECTED_MINOR_VERSION } from './constants.js';
 
 // In-memory cache of parsed Excel workbook data.
 export let workbookData = {
@@ -16,7 +16,8 @@ export let workbookData = {
     emailTemplate1: '',
     emailTemplate2: '',
     emailTemplate3: '',
-    adobeCcAdGroup: ''
+    adobeCcAdGroup: '',
+    version: ''
 };
 
 // Resets the in-memory workbook cache to empty defaults.
@@ -36,8 +37,24 @@ export function resetWorkbookData() {
         emailTemplate1: '',
         emailTemplate2: '',
         emailTemplate3: '',
-        adobeCcAdGroup: ''
+        adobeCcAdGroup: '',
+        version: ''
     };
+}
+
+// Checks the workbook version string and shows an alert if major/minor exceed expectations.
+export function checkWorkbookVersion(versionString) {
+    if (!versionString || typeof versionString !== 'string') return;
+    const parts = versionString.split('.');
+    const major = parseInt(parts[0], 10);
+    const minor = parseInt(parts[1], 10);
+    if (!isNaN(major) && major > EXPECTED_MAJOR_VERSION) {
+        alert('This workbook is very likely not to work with the tool, as the major version is greater than expected.');
+        return;
+    }
+    if (!isNaN(minor) && minor > EXPECTED_MINOR_VERSION) {
+        alert('This workbook may not work as expected with the tool, as the minor version is greater than expected.');
+    }
 }
 
 // Converts an Excel worksheet into an array of row arrays (skips the header row).
@@ -82,6 +99,17 @@ export function parseWorkbook(wb) {
     let emailTemplate2 = '';
     let emailTemplate3 = '';
     let adobeCcAdGroup = '';
+    let version = '';
+
+    if (wb.Sheets['Metadata']) {
+        const metadataSheet = wb.Sheets['Metadata'];
+        const versionRef = XLS.utils.encode_cell({ r: 1, c: 1 });
+        const versionCell = metadataSheet[versionRef];
+        if (versionCell && versionCell.v) {
+            version = String(versionCell.v).trim();
+        }
+        checkWorkbookVersion(version);
+    }
 
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
@@ -151,7 +179,8 @@ export function parseWorkbook(wb) {
         emailTemplate1: emailTemplate1,
         emailTemplate2: emailTemplate2,
         emailTemplate3: emailTemplate3,
-        adobeCcAdGroup: adobeCcAdGroup
+        adobeCcAdGroup: adobeCcAdGroup,
+        version: version
     };
     
     const dataToStore = {
@@ -185,8 +214,10 @@ export function loadFromStorage() {
                 emailTemplate1: data.emailTemplate1 || '',
                 emailTemplate2: data.emailTemplate2 || '',
                 emailTemplate3: data.emailTemplate3 || '',
-                adobeCcAdGroup: data.adobeCcAdGroup || ''
+                adobeCcAdGroup: data.adobeCcAdGroup || '',
+                version: data.version || ''
             };
+            checkWorkbookVersion(workbookData.version);
             return true;
         } catch (e) {
             console.error('Failed to load from storage:', e);
