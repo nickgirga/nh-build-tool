@@ -26,14 +26,17 @@ export function loadWordList() {
 // Generates a random passphrase from three capitalized words + a digit and updates the Users Table.
 export async function generateUsersPassword() {
     const words = await loadWordList();
-    const arr = new Uint32Array(3);
-    crypto.getRandomValues(arr);
-    const chosen = [
-        words[arr[0] % words.length],
-        words[arr[1] % words.length],
-        words[arr[2] % words.length]
-    ];
-    const password = chosen.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('') + Math.floor(Math.random() * 10);
+    let password = '';
+    while (password.length < 15) {
+        const arr = new Uint32Array(3);
+        crypto.getRandomValues(arr);
+        const chosen = [
+            words[arr[0] % words.length],
+            words[arr[1] % words.length],
+            words[arr[2] % words.length]
+        ];
+        password = chosen.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('') + Math.floor(Math.random() * 10);
+    }
 
     usersCells.password.textContent = password;
     saveUsersTable();
