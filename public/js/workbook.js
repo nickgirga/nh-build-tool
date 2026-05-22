@@ -17,7 +17,8 @@ export let workbookData = {
     emailTemplate2: '',
     emailTemplate3: '',
     adobeCcAdGroup: '',
-    version: ''
+    version: '',
+    checklistHash: ''
 };
 
 // Resets the in-memory workbook cache to empty defaults.
@@ -38,7 +39,8 @@ export function resetWorkbookData() {
         emailTemplate2: '',
         emailTemplate3: '',
         adobeCcAdGroup: '',
-        version: ''
+        version: '',
+        checklistHash: ''
     };
 }
 
@@ -100,6 +102,7 @@ export function parseWorkbook(wb) {
     let emailTemplate3 = '';
     let adobeCcAdGroup = '';
     let version = '';
+    let checklistHash = '';
 
     if (wb.Sheets['Metadata']) {
         const metadataSheet = wb.Sheets['Metadata'];
@@ -109,6 +112,12 @@ export function parseWorkbook(wb) {
             version = String(versionCell.v).trim();
         }
         checkWorkbookVersion(version);
+
+        const hashRef = XLS.utils.encode_cell({ r: 2, c: 1 });
+        const hashCell = metadataSheet[hashRef];
+        if (hashCell && hashCell.v) {
+            checklistHash = String(hashCell.v).trim();
+        }
     }
 
     if (wb.Sheets['Master Search']) {
@@ -180,7 +189,8 @@ export function parseWorkbook(wb) {
         emailTemplate2: emailTemplate2,
         emailTemplate3: emailTemplate3,
         adobeCcAdGroup: adobeCcAdGroup,
-        version: version
+        version: version,
+        checklistHash: checklistHash
     };
     
     const dataToStore = {
@@ -215,7 +225,8 @@ export function loadFromStorage() {
                 emailTemplate2: data.emailTemplate2 || '',
                 emailTemplate3: data.emailTemplate3 || '',
                 adobeCcAdGroup: data.adobeCcAdGroup || '',
-                version: data.version || ''
+                version: data.version || '',
+                checklistHash: data.checklistHash || ''
             };
             checkWorkbookVersion(workbookData.version);
             return true;

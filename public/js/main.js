@@ -55,6 +55,7 @@ excelFileInput.addEventListener('change', async (e) => {
             populateClipboardUtilities();
             updateFileStatus(true);
             updateLookups();
+            updateChecklistFabHref();
         } catch (error) {
             console.error('Error parsing Excel file:', error);
             const fileStatus = document.getElementById('fileStatus');
@@ -313,6 +314,26 @@ document.getElementById('mirrorCheckbox').addEventListener('change', () => {
     }
 });
 
+// --- Checklist FAB ---
+
+const checklistFab = document.getElementById('checklistFab');
+
+function updateChecklistFabHref() {
+    const hash = workbookData.checklistHash;
+    if (hash) {
+        checklistFab.href = `https://markdown-online.gitlab.io/?preview=1#fileContents=${hash}`;
+    } else {
+        checklistFab.href = '#';
+    }
+}
+
+checklistFab.addEventListener('click', (e) => {
+    if (!workbookData.checklistHash) {
+        e.preventDefault();
+        alert('No checklist hash found. Ensure the workbook has a value in Metadata cell B3.');
+    }
+});
+
 // --- Agent Name ---
 
 const savedAgentName = localStorage.getItem(AGENT_NAME_KEY);
@@ -356,6 +377,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         agentNameInput.value = '';
         clearUsersTable();
         updateFileStatus(false);
+        updateChecklistFabHref();
     }
 });
 
@@ -366,6 +388,7 @@ if (loadFromStorage()) {
     populateClipboardUtilities();
     updateFileStatus(true);
     updateLookups();
+    updateChecklistFabHref();
 } else {
     updateFileStatus(false);
 }
