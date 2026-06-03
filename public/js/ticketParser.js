@@ -303,9 +303,9 @@ export function parseTicketData(text) {
         }
     }
     
-    // Extract solution team member from Contact information section
+    // Extract solution team member from Contact information / Requester information section
     for (let i = 0; i < lines.length; i++) {
-        if (lines[i].includes('Contact information')) {
+        if (lines[i].includes('Contact information') || lines[i].includes('Requester information')) {
             data.solutionTeam = lines[i + 2] ? lines[i + 2].trim() : '';
             break;
         }
