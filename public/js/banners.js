@@ -160,7 +160,13 @@ export function buildPostParseNotes(data, ticketText) {
                 mouseRequested = true;
             }
         }
-        if (hasMonitor && line === 'monitor') {
+        if (line === 'do you need a wireless keyboard & mouse combo?') {
+            if (nextLine === 'yes') {
+                keyboardRequested = true;
+                mouseRequested = true;
+            }
+        }
+        if (hasMonitor && (line === 'monitor' || line === 'do you need a monitor?' || line === 'do you need a 2nd monitor?')) {
             if (nextLine !== '' && nextLine !== 'none' && !nextLine.includes('n/a')) {
                 monitorRequested = true;
             }
@@ -180,7 +186,7 @@ export function buildPostParseNotes(data, ticketText) {
         for (let i = 0; i < ticketLines.length; i++) {
             const line = ticketLines[i].trim().toLowerCase();
             const nextLine = ticketLines[i + 1] ? ticketLines[i + 1].trim().toLowerCase() : '';
-            if (line === 'dock') {
+            if (line === 'dock' || line === 'do you need a dock?' || line === 'do you need a 2nd dock?') {
                 if (nextLine === 'yes') {
                     dockRequested = true;
                 }
