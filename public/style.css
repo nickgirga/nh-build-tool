@@ -1279,7 +1279,7 @@ footer a:hover {
     opacity: 1;
 }
 
-a.fab {
+.fab {
     position: fixed;
     bottom: 24px;
     right: 24px;
@@ -1300,15 +1300,81 @@ a.fab {
     text-decoration: none;
 }
 
-a.fab .material-symbols-outlined {
+.fab .material-symbols-outlined {
     font-size: 24px;
 }
 
-a.fab:hover {
+.fab:hover {
     background-color: var(--primary-hover);
     transform: scale(1.1);
 }
 
-a.fab:active {
+.fab:active {
     transform: scale(1);
+}
+
+.fab-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    z-index: 999;
+}
+
+.fab-container .fab {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.fab-container .fab-sub {
+    width: 40px;
+    height: 40px;
+    left: 50%;
+    right: auto;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, bottom 0.25s ease;
+}
+
+.fab-sub .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.fab-container.open .fab-sub:nth-child(1) {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+    bottom: 64px;
+    transition-delay: 0.05s;
+}
+
+.fab-container.open .fab-sub:nth-child(2) {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+    bottom: 114px;
+    transition-delay: 0.1s;
+}
+
+.fab-container.open .fab-sub:nth-child(1):hover,
+.fab-container.open .fab-sub:nth-child(2):hover {
+    background-color: var(--primary-hover);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.fab-container.open .fab-sub:nth-child(1):active,
+.fab-container.open .fab-sub:nth-child(2):active {
+    transform: translateX(-50%) scale(1);
+}
+
+#mainFabIcon {
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.fab-container.open #mainFabIcon {
+    transform: rotate(45deg);
 }

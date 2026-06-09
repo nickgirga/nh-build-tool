@@ -319,6 +319,8 @@ document.getElementById('mirrorCheckbox').addEventListener('change', () => {
 // --- Checklist FAB ---
 
 const checklistFab = document.getElementById('checklistFab');
+const mainFab = document.getElementById('mainFab');
+const fabContainer = document.getElementById('fabContainer');
 
 function updateChecklistFabHref() {
     const hash = workbookData.checklistHash;
@@ -329,11 +331,26 @@ function updateChecklistFabHref() {
     }
 }
 
+function closeFabMenu() {
+    fabContainer.classList.remove('open');
+    mainFab.title = 'More';
+}
+
 checklistFab.addEventListener('click', (e) => {
     if (!workbookData.checklistHash) {
         e.preventDefault();
         alert('No checklist hash found. Ensure the workbook has a value in Metadata cell B3.');
     }
+    closeFabMenu();
+});
+
+document.getElementById('mirrorFab').addEventListener('click', () => {
+    closeFabMenu();
+});
+
+mainFab.addEventListener('click', () => {
+    const isOpen = fabContainer.classList.toggle('open');
+    mainFab.title = isOpen ? 'Hide' : 'More';
 });
 
 // --- Agent Name ---
