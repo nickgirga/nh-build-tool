@@ -230,7 +230,17 @@ export function updateLookups() {
         2
     ) : '';
     document.getElementById('adRolesPerJobTitle').textContent = adRolesPerJobTitle || (area && selectedJobTitle ? 'No matching role/location' : 'Select Job Title & Location above');
-    
+
+    const powerBi = (area && selectedJobTitle) ? xLookup(
+        [
+            { colIndex: 0, value: area },
+            { colIndex: 1, value: selectedJobTitle }
+        ],
+        workbookData.jobSoftwares,
+        3
+    ) : '';
+    document.getElementById('powerBi').textContent = powerBi || (area && selectedJobTitle ? 'No matching role/location' : 'Select Job Title & Location above');
+
     const adRolesPerLocation = selectedLocation ? vLookup(selectedLocation, workbookData.adPerLocation, 0, 1) : '';
     document.getElementById('adRolesPerLocation').textContent = adRolesPerLocation || (selectedLocation ? 'No matching role/location' : 'Select Location above');
     

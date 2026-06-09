@@ -312,6 +312,7 @@ export function updateFileStatus(loaded) {
     const fileStatus = document.getElementById('fileStatus');
     const lookupSection = document.getElementById('lookupSection');
     const resultsSection = document.getElementById('resultsSection');
+    const powerBiSection = document.getElementById('powerBiSection');
     const workbookWarning = document.getElementById('workbookWarning');
 
     if (loaded && workbookData.adPerType.length > 0) {
@@ -334,6 +335,7 @@ export function updateFileStatus(loaded) {
         fileStatus.classList.add('show');
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
+        if (powerBiSection) powerBiSection.style.display = 'flex';
         if (workbookWarning) workbookWarning.classList.remove('show');
     } else {
         fileStatus.textContent = '';
@@ -341,6 +343,7 @@ export function updateFileStatus(loaded) {
         fileStatus.classList.remove('show');
         lookupSection.style.display = 'none';
         resultsSection.style.display = 'none';
+        if (powerBiSection) powerBiSection.style.display = 'none';
         if (workbookWarning) workbookWarning.classList.add('show');
     }
 }

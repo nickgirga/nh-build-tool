@@ -182,6 +182,7 @@ generateBtn.addEventListener('click', async () => {
     if (workbookData.adPerType.length > 0) {
         const lookupSection = document.getElementById('lookupSection');
         const resultsSection = document.getElementById('resultsSection');
+        const powerBiSection = document.getElementById('powerBiSection');
 
         document.getElementById('jobTypeSelect').selectedIndex = 0;
         document.getElementById('jobTitleSelect').selectedIndex = 0;
@@ -215,6 +216,7 @@ generateBtn.addEventListener('click', async () => {
         updateLookups();
         lookupSection.style.display = 'flex';
         resultsSection.style.display = 'flex';
+        powerBiSection.style.display = 'flex';
         document.getElementById('lookupWarning').classList.add('show');
 
         const isMirror = MIRROR_PATTERN.test(ticketDataInput.value);

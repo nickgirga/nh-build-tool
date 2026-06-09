@@ -17,4 +17,4 @@ export const MONTHS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, 
 
 // Expected workbook version numbers (from 'Metadata' sheet cell B2)
 export const EXPECTED_MAJOR_VERSION = 2;
-export const EXPECTED_MINOR_VERSION = 2;
+export const EXPECTED_MINOR_VERSION = 4;
