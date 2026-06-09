@@ -122,7 +122,7 @@ export function parseWorkbook(wb) {
 
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
-        for (let row = 7; row <= 11; row++) {
+        for (let row = 7; row <= 12; row++) {
             const cellRef = XLS.utils.encode_cell({ r: row, c: 9 });
             const cell = masterSheet[cellRef];
             if (cell && cell.v) {
@@ -146,13 +146,13 @@ export function parseWorkbook(wb) {
         if (cmicPwCell && cmicPwCell.v) {
             cmicPassword = String(cmicPwCell.v).trim();
         }
-        const t1Ref = XLS.utils.encode_cell({ r: 13, c: 9 });
+        const t1Ref = XLS.utils.encode_cell({ r: 14, c: 9 });
         const t1Cell = masterSheet[t1Ref];
         if (t1Cell && t1Cell.v) emailTemplate1 = String(t1Cell.v).trim();
-        const t2Ref = XLS.utils.encode_cell({ r: 13, c: 10 });
+        const t2Ref = XLS.utils.encode_cell({ r: 14, c: 10 });
         const t2Cell = masterSheet[t2Ref];
         if (t2Cell && t2Cell.v) emailTemplate2 = String(t2Cell.v).trim();
-        const t3Ref = XLS.utils.encode_cell({ r: 13, c: 11 });
+        const t3Ref = XLS.utils.encode_cell({ r: 14, c: 11 });
         const t3Cell = masterSheet[t3Ref];
         if (t3Cell && t3Cell.v) emailTemplate3 = String(t3Cell.v).trim();
 
