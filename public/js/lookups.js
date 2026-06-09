@@ -5,6 +5,11 @@ function stripSymbols(str) {
     return str.replace(/[^\w\s]/g, '');
 }
 
+// Normalizes job title so that "Project Eng" and "Project Engineer" are treated as interchangeable.
+function normalizeJobTitle(title) {
+    return title.toLowerCase().replace(/\bproject eng\b/g, 'project engineer');
+}
+
 // Simple vertical lookup: finds the first row where keyColIndex matches lookupValue (case-insensitive) and returns returnColIndex.
 export function vLookup(lookupValue, sheetData, keyColIndex, returnColIndex) {
     for (const row of sheetData) {
@@ -46,7 +51,8 @@ export function findCmicGroupForLocation(location) {
 export function findBestJobTitleMatch(parsedJobTitle, cmicCode) {
     if (!parsedJobTitle || !workbookData.jobTitles.length) return parsedJobTitle;
 
-    const lowerTitle = parsedJobTitle.toLowerCase();
+    const normalizedTitle = normalizeJobTitle(parsedJobTitle);
+    const lowerTitle = normalizedTitle.toLowerCase();
     const parsedWords = lowerTitle.split(/\s+/);
 
     const tbPattern = new RegExp('t.......b');
@@ -66,9 +72,10 @@ export function findBestJobTitleMatch(parsedJobTitle, cmicCode) {
         const excelTitle = row[0];
         if (!excelTitle) continue;
 
+        const normalizedExcelTitle = normalizeJobTitle(excelTitle);
         const candidates = [
-            excelTitle.toLowerCase(),
-            stripSymbols(excelTitle).toLowerCase()
+            normalizedExcelTitle.toLowerCase(),
+            stripSymbols(normalizedExcelTitle).toLowerCase()
         ];
 
         for (const candidate of candidates) {
@@ -94,16 +101,18 @@ export function findBestJobTitleMatch(parsedJobTitle, cmicCode) {
         const excelTitle = row[0];
         if (!excelTitle) continue;
 
-        if (lowerTitle.includes(excelTitle.toLowerCase())) {
+        const normalizedExcelTitle = normalizeJobTitle(excelTitle);
+
+        if (lowerTitle.includes(normalizedExcelTitle.toLowerCase())) {
             return excelTitle;
         }
 
-        const stripped = stripSymbols(excelTitle).toLowerCase();
+        const stripped = stripSymbols(normalizedExcelTitle).toLowerCase();
         if (stripped && lowerTitle.includes(stripped)) {
             return excelTitle;
         }
 
-        if (tbMatch && excelTitle.toLowerCase().includes(tbMatch)) {
+        if (tbMatch && normalizedExcelTitle.toLowerCase().includes(tbMatch)) {
             return excelTitle;
         }
     }
@@ -192,6 +201,22 @@ export function findBestLocationMatch(parsedLocation, empTypeForLookup, textLowe
     
     if (lowerLocation.includes('honolulu')) {
         return 'Hawaii';
+    }
+    
+    if (lowerLocation.includes('fresno')) {
+        return 'Sacramento';
+    }
+    
+    if (lowerLocation.includes('new york ny')) {
+        return 'New York City';
+    }
+    
+    if (lowerLocation.includes('arvada')) {
+        return 'Denver';
+    }
+    
+    if (lowerLocation.includes('bellevue')) {
+        return 'Seattle';
     }
     
     for (const row of workbookData.adPerLocation) {
