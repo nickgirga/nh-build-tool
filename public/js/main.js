@@ -56,6 +56,7 @@ excelFileInput.addEventListener('change', async (e) => {
             updateFileStatus(true);
             updateLookups();
             updateChecklistFabHref();
+            updatePimActivationFabHref();
         } catch (error) {
             console.error('Error parsing Excel file:', error);
             const fileStatus = document.getElementById('fileStatus');
@@ -319,6 +320,7 @@ document.getElementById('mirrorCheckbox').addEventListener('change', () => {
 // --- Checklist FAB ---
 
 const checklistFab = document.getElementById('checklistFab');
+const pimActivationFab = document.getElementById('pimActivationFab');
 const mainFab = document.getElementById('mainFab');
 const fabContainer = document.getElementById('fabContainer');
 
@@ -331,6 +333,15 @@ function updateChecklistFabHref() {
     }
 }
 
+function updatePimActivationFabHref() {
+    const hash = workbookData.pimActivationHash;
+    if (hash) {
+        pimActivationFab.href = `https://markdown-online.gitlab.io/?preview=1#fileContents=${hash}`;
+    } else {
+        pimActivationFab.href = '#';
+    }
+}
+
 function closeFabMenu() {
     fabContainer.classList.remove('open');
     mainFab.title = 'More';
@@ -340,6 +351,14 @@ checklistFab.addEventListener('click', (e) => {
     if (!workbookData.checklistHash) {
         e.preventDefault();
         alert('No checklist hash found. Ensure the workbook has a value in Metadata cell B3.');
+    }
+    closeFabMenu();
+});
+
+pimActivationFab.addEventListener('click', (e) => {
+    if (!workbookData.pimActivationHash) {
+        e.preventDefault();
+        alert('No PIM activation hash found. Ensure the workbook has a value in Metadata cell B4.');
     }
     closeFabMenu();
 });
@@ -397,6 +416,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         clearUsersTable();
         updateFileStatus(false);
         updateChecklistFabHref();
+        updatePimActivationFabHref();
     }
 });
 
@@ -408,6 +428,7 @@ if (loadFromStorage()) {
     updateFileStatus(true);
     updateLookups();
     updateChecklistFabHref();
+    updatePimActivationFabHref();
 } else {
     updateFileStatus(false);
 }
