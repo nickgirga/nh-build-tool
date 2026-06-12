@@ -434,6 +434,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         agentNameInput.value = '';
         clearUsersTable();
         updateFileStatus(false);
+        closeFabMenu();
         updateChecklistFabHref();
         updatePimActivationFabHref();
         updateTrackerFabHref();

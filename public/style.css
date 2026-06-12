@@ -1321,6 +1321,11 @@ footer a:hover {
     height: 56px;
     z-index: 999;
     pointer-events: none;
+    display: none;
+}
+
+.fab-container.show {
+    display: block;
 }
 
 .fab-container .fab {

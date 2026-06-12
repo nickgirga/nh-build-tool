@@ -337,6 +337,8 @@ export function updateFileStatus(loaded) {
     const powerBiSection = document.getElementById('powerBiSection');
     const workbookWarning = document.getElementById('workbookWarning');
 
+    const fabContainer = document.getElementById('fabContainer');
+
     if (loaded && workbookData.adPerType.length > 0) {
         const stored = localStorage.getItem(STORAGE_KEY);
         let dateStr = '';
@@ -359,6 +361,7 @@ export function updateFileStatus(loaded) {
         resultsSection.style.display = 'flex';
         if (powerBiSection) powerBiSection.style.display = 'flex';
         if (workbookWarning) workbookWarning.classList.remove('show');
+        if (fabContainer) fabContainer.classList.add('show');
     } else {
         fileStatus.textContent = '';
         fileStatus.classList.remove('loaded');
@@ -367,5 +370,6 @@ export function updateFileStatus(loaded) {
         resultsSection.style.display = 'none';
         if (powerBiSection) powerBiSection.style.display = 'none';
         if (workbookWarning) workbookWarning.classList.add('show');
+        if (fabContainer) fabContainer.classList.remove('show');
     }
 }
