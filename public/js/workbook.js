@@ -19,7 +19,8 @@ export let workbookData = {
     adobeCcAdGroup: '',
     version: '',
     checklistHash: '',
-    pimActivationHash: ''
+    pimActivationHash: '',
+    trackerUrl: ''
 };
 
 // Resets the in-memory workbook cache to empty defaults.
@@ -42,7 +43,8 @@ export function resetWorkbookData() {
         adobeCcAdGroup: '',
         version: '',
         checklistHash: '',
-        pimActivationHash: ''
+        pimActivationHash: '',
+        trackerUrl: ''
     };
 }
 
@@ -106,6 +108,7 @@ export function parseWorkbook(wb) {
     let version = '';
     let checklistHash = '';
     let pimActivationHash = '';
+    let trackerUrl = '';
 
     if (wb.Sheets['Metadata']) {
         const metadataSheet = wb.Sheets['Metadata'];
@@ -126,6 +129,12 @@ export function parseWorkbook(wb) {
         const pimHashCell = metadataSheet[pimHashRef];
         if (pimHashCell && pimHashCell.v) {
             pimActivationHash = String(pimHashCell.v).trim();
+        }
+
+        const trackerRef = XLS.utils.encode_cell({ r: 4, c: 1 });
+        const trackerCell = metadataSheet[trackerRef];
+        if (trackerCell && trackerCell.v) {
+            trackerUrl = String(trackerCell.v).trim();
         }
     }
 
@@ -200,7 +209,8 @@ export function parseWorkbook(wb) {
         adobeCcAdGroup: adobeCcAdGroup,
         version: version,
         checklistHash: checklistHash,
-        pimActivationHash: pimActivationHash
+        pimActivationHash: pimActivationHash,
+        trackerUrl: trackerUrl
     };
     
     const dataToStore = {
@@ -237,7 +247,8 @@ export function loadFromStorage() {
                 adobeCcAdGroup: data.adobeCcAdGroup || '',
                 version: data.version || '',
                 checklistHash: data.checklistHash || '',
-                pimActivationHash: data.pimActivationHash || ''
+                pimActivationHash: data.pimActivationHash || '',
+                trackerUrl: data.trackerUrl || ''
             };
             checkWorkbookVersion(workbookData.version);
             return true;

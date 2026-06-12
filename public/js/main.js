@@ -57,6 +57,7 @@ excelFileInput.addEventListener('change', async (e) => {
             updateLookups();
             updateChecklistFabHref();
             updatePimActivationFabHref();
+            updateTrackerFabHref();
         } catch (error) {
             console.error('Error parsing Excel file:', error);
             const fileStatus = document.getElementById('fileStatus');
@@ -321,6 +322,7 @@ document.getElementById('mirrorCheckbox').addEventListener('change', () => {
 
 const checklistFab = document.getElementById('checklistFab');
 const pimActivationFab = document.getElementById('pimActivationFab');
+const trackerFab = document.getElementById('trackerFab');
 const mainFab = document.getElementById('mainFab');
 const fabContainer = document.getElementById('fabContainer');
 
@@ -342,6 +344,15 @@ function updatePimActivationFabHref() {
     }
 }
 
+function updateTrackerFabHref() {
+    const url = workbookData.trackerUrl;
+    if (url) {
+        trackerFab.href = url;
+    } else {
+        trackerFab.href = '#';
+    }
+}
+
 function closeFabMenu() {
     fabContainer.classList.remove('open');
     mainFab.title = 'More';
@@ -359,6 +370,14 @@ pimActivationFab.addEventListener('click', (e) => {
     if (!workbookData.pimActivationHash) {
         e.preventDefault();
         alert('No PIM activation hash found. Ensure the workbook has a value in Metadata cell B4.');
+    }
+    closeFabMenu();
+});
+
+trackerFab.addEventListener('click', (e) => {
+    if (!workbookData.trackerUrl) {
+        e.preventDefault();
+        alert('No tracker URL found. Ensure the workbook has a value in Metadata cell B5.');
     }
     closeFabMenu();
 });
@@ -417,6 +436,7 @@ clearAllStorageBtn.addEventListener('click', () => {
         updateFileStatus(false);
         updateChecklistFabHref();
         updatePimActivationFabHref();
+        updateTrackerFabHref();
     }
 });
 
@@ -429,6 +449,7 @@ if (loadFromStorage()) {
     updateLookups();
     updateChecklistFabHref();
     updatePimActivationFabHref();
+    updateTrackerFabHref();
 } else {
     updateFileStatus(false);
 }

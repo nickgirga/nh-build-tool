@@ -1331,11 +1331,11 @@ footer a:hover {
 }
 
 .fab-container .fab-sub {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     left: auto;
-    right: 8px;
-    bottom: 8px;
+    right: 10px;
+    bottom: 10px;
     opacity: 0;
     transform: scale(0.8);
     pointer-events: none;
@@ -1343,55 +1343,71 @@ footer a:hover {
 }
 
 .fab-sub .material-symbols-outlined {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .fab-container.open .fab-sub:nth-child(1) {
     opacity: 1;
-    transform: scale(1) translate(0, -72px);
+    transform: scale(1) translate(-90px, 0);
     pointer-events: auto;
     transition-delay: 0.05s;
 }
 
 .fab-container.open .fab-sub:nth-child(2) {
     opacity: 1;
-    transform: scale(1) translate(-51px, -51px);
+    transform: scale(1) translate(-78px, -45px);
     pointer-events: auto;
     transition-delay: 0.1s;
 }
 
 .fab-container.open .fab-sub:nth-child(3) {
     opacity: 1;
-    transform: scale(1) translate(-72px, 0);
+    transform: scale(1) translate(-45px, -78px);
     pointer-events: auto;
     transition-delay: 0.15s;
 }
 
+.fab-container.open .fab-sub:nth-child(4) {
+    opacity: 1;
+    transform: scale(1) translate(0, -90px);
+    pointer-events: auto;
+    transition-delay: 0.2s;
+}
+
 .fab-container.open .fab-sub:nth-child(1):hover {
     background-color: var(--primary-hover);
-    transform: scale(1.1) translate(0, -72px);
+    transform: scale(1.1) translate(-90px, 0);
 }
 
 .fab-container.open .fab-sub:nth-child(2):hover {
     background-color: var(--primary-hover);
-    transform: scale(1.1) translate(-51px, -51px);
+    transform: scale(1.1) translate(-78px, -45px);
 }
 
 .fab-container.open .fab-sub:nth-child(3):hover {
     background-color: var(--primary-hover);
-    transform: scale(1.1) translate(-72px, 0);
+    transform: scale(1.1) translate(-45px, -78px);
+}
+
+.fab-container.open .fab-sub:nth-child(4):hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.1) translate(0, -90px);
 }
 
 .fab-container.open .fab-sub:nth-child(1):active {
-    transform: scale(1) translate(0, -72px);
+    transform: scale(1) translate(-90px, 0);
 }
 
 .fab-container.open .fab-sub:nth-child(2):active {
-    transform: scale(1) translate(-51px, -51px);
+    transform: scale(1) translate(-78px, -45px);
 }
 
 .fab-container.open .fab-sub:nth-child(3):active {
-    transform: scale(1) translate(-72px, 0);
+    transform: scale(1) translate(-45px, -78px);
+}
+
+.fab-container.open .fab-sub:nth-child(4):active {
+    transform: scale(1) translate(0, -90px);
 }
 
 #mainFabIcon {
