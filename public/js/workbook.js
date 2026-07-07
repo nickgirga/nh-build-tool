@@ -140,7 +140,7 @@ export function parseWorkbook(wb) {
 
     if (wb.Sheets['Master Search']) {
         const masterSheet = wb.Sheets['Master Search'];
-        for (let row = 7; row <= 12; row++) {
+        for (let row = 6; row <= 12; row++) {
             const cellRef = XLS.utils.encode_cell({ r: row, c: 9 });
             const cell = masterSheet[cellRef];
             if (cell && cell.v) {
